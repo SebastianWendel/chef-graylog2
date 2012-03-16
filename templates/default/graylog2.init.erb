@@ -1,0 +1,51 @@
+#! /bin/sh
+
+# Installed by Chef => graylog2::default.rb
+
+### BEGIN INIT INFO
+# Provides:          graylog2
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the graylog2 server
+# Description:       starts the graylog2 java server using the graylog2 control script
+### END INIT INFO
+#
+#  Once installed, use "sudo update-rc.d graylog2 defaults" to enable!
+
+BINDIR=<%= node[:graylog2][:basedir] %>/server/bin
+NAME=graylog2
+DESC=graylog2
+
+test -x /usr/bin/java || exit 0
+
+set -e
+
+case "$1" in
+  start)
+        echo -n "Starting $DESC: "
+        cd $BINDIR
+        ./graylog2ctl start
+        echo "...started."
+        ;;
+  stop)
+        echo -n "Stopping $DESC: "
+        cd $BINDIR
+        ./graylog2ctl stop
+        echo "...stopped."
+        ;;
+  restart)
+        echo -n "Restarting $DESC: "
+        cd $BINDIR
+        ./graylog2ctl restart
+        echo "...restarted."
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

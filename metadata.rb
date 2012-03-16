@@ -1,0 +1,11 @@
+maintainer        "SourceIndex IT-Services"
+maintainer_email  "packages@sourceindex.de"
+license           "Apache 2.0"
+description       "Installs and configures Graylog2 < 0.9.6"
+version           "0.0.6"
+recipe            "graylog2", "Installs and configures Graylog2"
+
+supports "ubuntu"
+depends "java"
+depends "apache2"
+depends "elasticsearch"
