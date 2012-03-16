@@ -6,6 +6,7 @@ version           "0.0.6"
 recipe            "graylog2", "Installs and configures Graylog2"
 
 supports "ubuntu"
+depends "apt"
 depends "java"
 depends "apache2"
 depends "elasticsearch"

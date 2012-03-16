@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: graylog2
-# Recipe:: web_interface
+# Recipe:: web-interface
 #
 # Copyright 2012, SourceIndex IT-Services
 #
@@ -20,8 +20,79 @@
 package "build-essential"
 package "postfix"
 
-gem_package "bundler"
-gem_package "rake"
+gem_package "rack" do
+  action :install
+end
+
+gem_package "rake" do
+  action :install
+end
+
+gem_package "rails" do
+  action :install
+end
+
+gem_package "json" do
+  action :install
+end
+
+gem_package "chronic" do
+  action :install
+end
+
+gem_package "declarative_authorization" do
+  action :install
+end
+
+gem_package "graylog2-declarative_authorization" do
+  action :install
+end
+
+gem_package "pony" do
+  action :install
+end
+
+gem_package "hoptoad_notifier" do
+  action :install
+end
+
+gem_package "rpm_contrib" do
+  action :install
+end
+
+gem_package "mongoid" do
+  version "2.4.5"
+  action :install
+end
+
+gem_package "tire" do
+  action :install
+end
+
+gem_package "bson" do
+  action :install
+end
+
+gem_package "bson_ext" do
+  action :install
+end
+
+gem_package "home_run" do
+  action :install
+end
+
+gem_package "SystemTimer" do
+  action :install
+end
+
+gem_package "rails_autolink" do
+  action :install
+end
+
+gem_package "kaminari" do
+  action :install
+end
+
 
 directory "#{node.graylog2.basedir}/rel" do
   mode 0755
