@@ -1,9 +1,15 @@
 default.graylog2.java_home = ENV['JAVA_HOME']
 default.graylog2.basedir = "/usr/share/graylog2"
 default.graylog2.user = "graylog2"
+default.graylog2.group = "graylog2"
+default.graylog2.storage_backend = "elasticsearch"
 
 default.graylog2.server.version = "0.9.6"
 default.graylog2.web_interface.version = "0.9.6"
+
+default.graylog2.download_url = "https://github.com/downloads/Graylog2"
+default.graylog2.download_server = "#{node.graylog2.download_url}/graylog2-server/graylog2-server-#{node.graylog2.server.version}.tar.gz"
+default.graylog2.download_web = "#{node.graylog2.download_url}/Graylog2/graylog2-web/graylog2-server-#{node.graylog2.web.version}.tar.gz"
 
 case node[:platform]
 when "debian", "ubuntu"

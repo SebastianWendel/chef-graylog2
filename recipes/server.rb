@@ -17,9 +17,15 @@
 # limitations under the License.
 #
 
-directory "#{node.graylog2.basedir}/rel" do
-  mode 0755
+user "#{node.graylog2.user}" do
+  home "#{node.graylog2.basedir}"
+end
+
+directory "#{node.graylog2.basedir}" do
   recursive true
+  mode 0755
+  owner "#{node.graylog2.user}"
+  group "#{node.graylog2.group}"
 end
 
 remote_file "download_server" do
