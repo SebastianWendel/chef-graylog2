@@ -17,32 +17,34 @@
 # limitations under the License.
 #
 
-user "#{node.graylog2.user}" do
-  home "#{node.graylog2.basedir}"
+user node['graylog2']['user'] do
+  home node['graylog2']['basedir']
 end
 
-directory "#{node.graylog2.basedir}" do
-  recursive true
-  mode 0755
-  owner "#{node.graylog2.user}"
-  group "#{node.graylog2.group}"
-end
+unless FileTest.exists?(node['graylog']['install_path'])
+  directory node['graylog2']['basedir'] do
+    recursive true
+    mode 0755
+    owner node['graylog2']['user']
+    group node['graylog2']['group']
+  end
 
-remote_file "download_server" do
-  path "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}.tar.gz"
-  source "https://github.com/downloads/Graylog2/graylog2-server/graylog2-server-#{node.graylog2.server.version}.tar.gz"
-  action :create_if_missing
-end
+  remote_file "download_server" do
+    path "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}.tar.gz"
+    source "https://github.com/downloads/Graylog2/graylog2-server/graylog2-server-#{node.graylog2.server.version}.tar.gz"
+    action :create_if_missing
+  end
 
-execute "tar zxf graylog2-server-#{node.graylog2.server.version}.tar.gz" do
-  cwd "#{node.graylog2.basedir}/rel"
-  creates "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}/build_date"
-  action :nothing
-  subscribes :run, resources(:remote_file => "download_server"), :immediately
-end
+  execute "tar zxf graylog2-server-#{node.graylog2.server.version}.tar.gz" do
+    cwd "#{node.graylog2.basedir}/rel"
+    creates "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}/build_date"
+    action :nothing
+    subscribes :run, resources(:remote_file => "download_server"), :immediately
+  end
 
-link "#{node.graylog2.basedir}/server" do
-  to "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}"
+  link "#{node.graylog2.basedir}/server" do
+    to "#{node.graylog2.basedir}/rel/graylog2-server-#{node.graylog2.server.version}"
+  end
 end
 
 template "/etc/graylog2.conf" do
