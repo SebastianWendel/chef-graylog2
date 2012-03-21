@@ -87,7 +87,7 @@ unless FileTest.exists?("#{server_path}/#{server_version}")
     end
 end
 
-log "Downloaded, installed and configured the Graylog2 binary files." do
+log "Downloaded, installed and configured the Graylog2 binary files in #{server_path}/#{server_version}." do
     action :nothing
 end
 
@@ -96,7 +96,7 @@ unless FileTest.exists?("#{syslog4j_path}/#{syslog4j_version}")
         mode 0755
     end
 
-    remote_file "#{syslog4j_path}/#{syslog4j_download}" do
+    remote_file "#{syslog4j_path}/#{syslog4j_file}" do
         source syslog4j_download
         checksum syslog4j_checksum
         action :create_if_missing
@@ -107,7 +107,7 @@ unless FileTest.exists?("#{syslog4j_path}/#{syslog4j_version}")
     end
 end
 
-log "Downloaded, installed and configured the syslog4j binary files." do
+log "Downloaded, installed and configured the syslog4j binary files for graylog2 logging in #{syslog4j_path}/#{syslog4j_version}." do
     action :nothing
 end
 
@@ -129,6 +129,6 @@ service "graylog2" do
   action [:enable, :start]
 end
 
-log "Installed the Graylog2 init file, change the runlevel and startet the service." do
+log "Installed the Graylog2 init file /etc/init.d/graylog2, change the runlevel and startet the service." do
     action :nothing
 end
