@@ -1,6 +1,13 @@
 Description
 ===========
 
+Dependencies
+=======
+
+MongoDB
+-------
+[https://github.com/edelight/chef-cookbooks]
+
 Recipes
 =======
 

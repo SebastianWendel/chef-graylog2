@@ -17,134 +17,78 @@
 # limitations under the License.
 #
 
+
+include_recipe "graylog2::apache2"
+include_recipe "gems"
+
 package "build-essential"
 package "postfix"
 
-gem_package "rack" do
-  action :install
+web_path         = node['graylog2']['web_path']
+web_user         = node['graylog2']['web_user']
+web_group        = node['graylog2']['web_group']
+web_download     = node['graylog2']['web_download']
+web_version      = node['graylog2']['web_version']
+web_file         = node['graylog2']['web_file']
+web_checksum     = node['graylog2']['web_checksum']
+
+gem_package "bundler" do
+    action :install
 end
 
 gem_package "rake" do
-  action :install
+    action :install
 end
 
-gem_package "rails" do
-  action :install
-end
+#unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
+    directory web_path do
+        owner web_user
+        group web_group
+        mode 0755
+    end
 
-gem_package "json" do
-  action :install
-end
+    remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
+        source web_download
+        checksum web_checksum
+        action :create_if_missing
+    end
 
-gem_package "chronic" do
-  action :install
-end
+    bash "install graylog2 sources #{web_file}" do
+        cwd Chef::Config[:file_cache_path]
+        code <<-EOH
+            tar -zxf #{web_file} -C #{web_path}
+        EOH
+    end
 
-gem_package "declarative_authorization" do
-  action :install
-end
+    link "#{web_path}/current" do
+        to "#{web_path}/graylog2-web-interface-#{web_version}"
+    end
 
-gem_package "graylog2-declarative_authorization" do
-  action :install
-end
-
-gem_package "pony" do
-  action :install
-end
-
-gem_package "hoptoad_notifier" do
-  action :install
-end
-
-gem_package "rpm_contrib" do
-  action :install
-end
-
-gem_package "mongoid" do
-  version "2.4.5"
-  action :install
-end
-
-gem_package "tire" do
-  action :install
-end
-
-gem_package "bson" do
-  action :install
-end
-
-gem_package "bson_ext" do
-  action :install
-end
-
-gem_package "home_run" do
-  action :install
-end
-
-gem_package "SystemTimer" do
-  action :install
-end
-
-gem_package "rails_autolink" do
-  action :install
-end
-
-gem_package "kaminari" do
-  action :install
-end
-
-
-directory "#{node.graylog2.basedir}/rel" do
-  mode 0755
-  recursive true
-end
-
-remote_file "download_web_interface" do
-  path "#{node.graylog2.basedir}/rel/graylog2-web-interface-#{node.graylog2.web_interface.version}.tar.gz"
-  source "https://github.com/downloads/Graylog2/graylog2-web-interface/graylog2-web-interface-#{node.graylog2.web_interface.version}.tar.gz"
-  action :create_if_missing
-end
-
-execute "tar zxf graylog2-web-interface-#{node.graylog2.web_interface.version}.tar.gz" do
-  cwd "#{node.graylog2.basedir}/rel"
-  creates "#{node.graylog2.basedir}/rel/graylog2-web-interface-#{node.graylog2.web_interface.version}/build_date"
-  action :nothing
-  subscribes :run, resources(:remote_file => "download_web_interface"), :immediately
-end
-
-link "#{node.graylog2.basedir}/web" do
-  to "#{node.graylog2.basedir}/rel/graylog2-web-interface-#{node.graylog2.web_interface.version}"
-end
+    log "Downloaded, installed and configured the Graylog2 Web binary files in #{web_path}/#{web_version}." do
+        action :nothing
+    end
+#end
 
 execute "bundle install" do
-  cwd "#{node.graylog2.basedir}/web"
-  action :nothing
-  subscribes :run, resources(:link => "#{node.graylog2.basedir}/web"), :immediately
+    cwd "#{web_path}/graylog2-web-interface-#{web_version}"
 end
 
-template "#{node.graylog2.basedir}/web/config/general.yml" do
-  owner "nobody"
-  group "nogroup"
-  mode 0644
-end
+execute "sudo chown -R #{web_user}:#{web_group} \"#{web_path}/graylog2-web-interface-#{web_version}/\"}"
 
-execute "sudo chown -R nobody:nogroup graylog2-web-interface-#{node.graylog2.web_interface.version}" do
-  cwd "#{node.graylog2.basedir}/rel"
-  not_if do
-    File.stat("#{node.graylog2.basedir}/rel/graylog2-web-interface-#{node.graylog2.web_interface.version}").uid == 65534
-  end
-  action :nothing
-  subscribes :run, resources(:execute => "bundle install"), :immediately
+template "#{web_path}/graylog2-web-interface-#{web_version}/config/general.yml" do
+    owner "nobody"
+    group "nogroup"
+    mode 0644
 end
 
 cron "Graylog2 send stream alarms" do
-  minute node['graylog2']['stream_alarms_cron_minute']
-  action node['graylog2']['send_stream_alarms'] ? :create : :delete
-  command "cd #{node['graylog2']['basedir']}/web && RAILS_ENV=production bundle exec rake streamalarms:send"
+    minute node['graylog2']['stream_alarms_cron_minute']
+    action node['graylog2']['send_stream_alarms'] ? :create : :delete
+    command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake streamalarms:send"
 end
 
 cron "Graylog2 send stream subscriptions" do
-  minute node['graylog2']['stream_subscriptions_cron_minute']
-  action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
-  command "cd #{node['graylog2']['basedir']}/web && RAILS_ENV=production bundle exec rake subscriptions:send"
+    minute node['graylog2']['stream_subscriptions_cron_minute']
+    action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
+    command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
 end

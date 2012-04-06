@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe "graylog2::web_interface"
-
 include_recipe "apache2"
+include_recipe "apache2::mod_ssl"
+include_recipe "apache2::mod_rewrite"
 
 package "libapache2-mod-passenger"
 

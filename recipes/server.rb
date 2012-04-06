@@ -18,6 +18,8 @@
 #
 
 include_recipe "java"
+include_recipe "logrotate"
+include_recipe "mongodb"
 
 server_storage      = node['graylog2']['server_storage']
 server_user         = node['graylog2']['server_user']
@@ -35,16 +37,11 @@ syslog4j_path       = node['graylog2']['syslog4j_path']
 
 if (server_storage == "elasticsearch")
     include_recipe "elasticsearch"
-    template "/etc/graylog2.conf" do
-        source "graylog2_elasticsearch.conf.erb"
-        mode 0644
-    end
-elsif (server_storage == "mongodb")
-    include_recipe "mongodb"
-    template "/etc/graylog2.conf" do
-        source "graylog2_mongodb.conf.erb"
-        mode 0644
-    end
+end
+
+template "/etc/graylog2.conf" do
+    source "graylog2.conf.erb"
+    mode 0644
 end
 
 group server_group do
@@ -55,7 +52,7 @@ user server_user do
     home server_path
     comment "services user for graylog2-server"
     gid server_group
-    shell "/bin/false"
+    #shell "/bin/false"
     system true
 end
 
@@ -63,32 +60,40 @@ log "Created service user #{server_user} and group #{server_group} to run graylo
     action :nothing
 end
 
-unless FileTest.exists?("#{server_path}/#{server_version}")
+unless FileTest.exists?("#{server_path}/graylog2-server-#{server_version}")
     directory server_path do
-        mode 0755
         owner server_user
         group server_group
+        mode 0755
     end
 
-    remote_file "#{Chef::Config[:file_cache_path]}/#{server_download}" do
+    remote_file "#{Chef::Config[:file_cache_path]}/#{server_file}" do
         source server_download
         checksum server_checksum
         action :create_if_missing
     end
 
-    bash "install_server" do
+    bash "install graylog2 sources #{server_file}" do
         cwd Chef::Config[:file_cache_path]
-        creates server_path
-        code "tar -zxvf #{server_file} -C #{server_path}"
+        code <<-EOH
+            tar -zxf #{server_file} -C  #{server_path}
+        EOH
     end
 
     link "#{server_path}/current" do
-        to "#{server_path}/#{server_version}"
+        to "#{server_path}/graylog2-server-#{server_version}"
     end
-end
 
-log "Downloaded, installed and configured the Graylog2 binary files in #{server_path}/#{server_version}." do
-    action :nothing
+    directory server_path do
+        recursive true
+        owner server_user
+        group server_group
+        mode 0755
+    end
+
+    log "Downloaded, installed and configured the Graylog2 binary files in #{server_path}/#{server_version}." do
+        action :nothing
+    end
 end
 
 unless FileTest.exists?("#{syslog4j_path}/#{syslog4j_version}")
@@ -105,17 +110,37 @@ unless FileTest.exists?("#{syslog4j_path}/#{syslog4j_version}")
     link "#{syslog4j_path}/syslog4j-current-bin.jar" do
         to "#{syslog4j_path}/#{syslog4j_file}"
     end
+
+    log "Downloaded, installed and configured the syslog4j binary files for graylog2 logging in #{syslog4j_path}/#{syslog4j_version}." do
+        action :nothing
+    end
 end
 
-log "Downloaded, installed and configured the syslog4j binary files for graylog2 logging in #{syslog4j_path}/#{syslog4j_version}." do
-    action :nothing
+directory "/var/log/graylog2-server" do
+    owner server_user
+    group server_group
+    mode 0755
+end
+
+directory "/var/run/graylog2-server" do
+    owner server_user
+    group server_group
+    mode 0755
+end
+
+logrotate_app "graylog2-server" do
+  cookbook "logrotate"
+  path "/var/log/graylog2-server/graylog2.log"
+  frequency "daily"
+  rotate 30
+  create "644 root adm"
 end
 
 template "/etc/init.d/graylog2" do
     source "graylog2.init.erb"
     owner "root"
     group "root"
-    mode "0755"
+    mode 0755
 end
 
 execute "update-rc.d graylog2 defaults" do
