@@ -73,7 +73,12 @@ execute "bundle install" do
     cwd "#{web_path}/graylog2-web-interface-#{web_version}"
 end
 
-execute "sudo chown -R #{web_user}:#{web_group} \"#{web_path}/graylog2-web-interface-#{web_version}/\"}"
+directory "#{web_path}/graylog2-web-interface-#{web_version}/" do
+    owner web_user
+    group web_group
+    mode 0755
+    recursive true
+end
 
 template "#{web_path}/graylog2-web-interface-#{web_version}/config/general.yml" do
     owner "nobody"
