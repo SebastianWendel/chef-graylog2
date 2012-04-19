@@ -41,8 +41,8 @@ default['graylog2']['syslog4j_checksum'] = "9c9f44fb457fc3157f5dab7e9c94b027e964
 
 # server config
 default['graylog2']['server_path'] = "/usr/share/graylog2-server"
-default['graylog2']['server_user'] = "graylog2"
-default['graylog2']['server_group'] = "graylog2"
+default['graylog2']['server_user'] = "graylog2-server"
+default['graylog2']['server_group'] = "graylog2-server"
 default['graylog2']['server_storage'] = "elasticsearch"
 default['graylog2']['server_port'] = 5140
 
@@ -50,9 +50,10 @@ default['graylog2']['server_port'] = 5140
 default['graylog2']['syslog4j_path'] = "/usr/share/syslog4j"
 
 # webfrontend config
+default['graylog2']['ruby_version'] = "1.9.3"
 default['graylog2']['web_path'] = "/var/www/graylog2-web-interface"
-default['graylog2']['web_user'] = "www-data"
-default['graylog2']['web_group'] = "www-data"
+default['graylog2']['web_user'] = "graylog2-web"
+default['graylog2']['web_group'] = "graylog2-web"
 
 # mongodb config
 default['graylog2']['mongo_host'] = "127.0.0.1"

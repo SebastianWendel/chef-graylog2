@@ -17,13 +17,8 @@
 # limitations under the License.
 #
 
-
-include_recipe "graylog2::apache2"
-include_recipe "gems"
-
-package "build-essential"
-package "postfix"
-
+# VARIABLES LOCAL
+ruby_version     = node['graylog2']['ruby_version']
 web_path         = node['graylog2']['web_path']
 web_user         = node['graylog2']['web_user']
 web_group        = node['graylog2']['web_group']
@@ -32,23 +27,86 @@ web_version      = node['graylog2']['web_version']
 web_file         = node['graylog2']['web_file']
 web_checksum     = node['graylog2']['web_checksum']
 
-gem_package "bundler" do
-    action :install
+# DEPENDENCIES COOKBOOKS
+include_recipe "graylog2::apache2"
+#include_recipe "gems"
+
+# DEPENDENCIES PACKAGES
+package "postfix"
+package "curl"
+package "build-essential"
+package "autoconf"
+package "automake"
+
+# CREATE FOLDER
+directory web_path do
+    action :create
 end
 
-gem_package "rake" do
-    action :install
+# CREATE GROUPS
+group web_group do
+    system true
+end
+
+# CREATE USER
+user web_user do
+    home web_path
+    comment "services user for graylog2-web-Interface"
+    gid web_group
+    shell "/bin/bash"
+end
+
+# SET FOLDER PERMISSIONS
+directory web_path do
+    owner web_user
+    group web_group
+    mode "0755"
+end
+
+# INSTALL RVM
+#unless FileTest.exists?("#{web_path}/.rvm")
+    bash "Install latest RVM." do
+        code <<-EOH
+            su - #{web_user} -c "curl -L get.rvm.io | bash -s stable"
+            exit 0
+        EOH
+    end
+#end
+
+# INSTALL RUBY AND GEM
+#unless FileTest.exists?("#{web_path}/.rvm/rubies/default/bin/ruby")
+  bash "Install Ruby version #{ruby_version}." do
+      code <<-EOH
+          su - #{web_user} -c "source #{web_path}/.rvm/scripts/rvm && rvm install #{ruby_version}"
+          exit 0
+      EOH
+  end
+#end
+
+# SET DEFAULT RUBY
+# unless FileTest.exists?("#{web_path}/.rvm/rubies/default/bin/ruby")
+  bash "Set default Ruby version #{ruby_version}." do
+      code <<-EOH
+          su - #{web_user} -c "rvm use --default #{ruby_version}"
+          exit 0
+      EOH
+  end
+#end
+
+# INSTALL THE BUNDLER GEM
+bash "gem install bundler" do
+    code <<-EOH
+        su - #{web_user} -c "gem install bundler --no-rdoc --no-ri"
+    EOH
+end
+
+bash "gem install rake" do
+    code <<-EOH
+        su - #{web_user} -c "gem install rake --no-rdoc --no-ri"
+    EOH
 end
 
 #unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
-    directory web_path do
-        owner web_user
-        group web_group
-        mode "0755"
-        action :create
-        recursive true
-    end
-
     remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
         source web_download
         checksum web_checksum
@@ -65,14 +123,15 @@ end
     link "#{web_path}/current" do
         to "#{web_path}/graylog2-web-interface-#{web_version}"
     end
-
     log "Downloaded, installed and configured the Graylog2 Web binary files in #{web_path}/#{web_version}." do
         action :nothing
     end
 #end
 
-execute "bundle install" do
-    cwd "#{web_path}/graylog2-web-interface-#{web_version}"
+bash "bundle install graylog2" do
+    code <<-EOH
+        su - #{web_user} -c "bundle install"
+    EOH
 end
 
 execute "graylog2-web-interface owner-change" do
@@ -96,3 +155,8 @@ cron "Graylog2 send stream subscriptions" do
     action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
     command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
 end
+
+package "build-essential"
+package "autoconf"
+package "automake"
+

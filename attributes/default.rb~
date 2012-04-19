@@ -50,9 +50,10 @@ default['graylog2']['server_port'] = 5140
 default['graylog2']['syslog4j_path'] = "/usr/share/syslog4j"
 
 # webfrontend config
+default['graylog2']['rvm_version'] = "1.9.3"
 default['graylog2']['web_path'] = "/var/www/graylog2-web-interface"
-default['graylog2']['web_user'] = "www-data"
-default['graylog2']['web_group'] = "www-data"
+default['graylog2']['web_user'] = "graylog2"
+default['graylog2']['web_group'] = "graylog2"
 
 # mongodb config
 default['graylog2']['mongo_host'] = "127.0.0.1"
