@@ -29,19 +29,10 @@ web_checksum     = node['graylog2']['web_checksum']
 
 # DEPENDENCIES COOKBOOKS
 include_recipe "graylog2::apache2"
-#include_recipe "gems"
+include_recipe "ruby_build"
 
 # DEPENDENCIES PACKAGES
 package "postfix"
-package "curl"
-package "build-essential"
-package "autoconf"
-package "automake"
-
-# CREATE FOLDER
-directory web_path do
-    action :create
-end
 
 # CREATE GROUPS
 group web_group do
@@ -50,10 +41,15 @@ end
 
 # CREATE USER
 user web_user do
-    home web_path
-    comment "services user for graylog2-web-Interface"
-    gid web_group
-    shell "/bin/bash"
+  home web_path
+  comment "services user for thr graylog2-web-interface"
+  gid web_group
+  shell "/bin/bash"
+end
+
+# CREATE FOLDER
+directory web_path do
+    action :create
 end
 
 # SET FOLDER PERMISSIONS
@@ -63,50 +59,32 @@ directory web_path do
     mode "0755"
 end
 
-# INSTALL RVM
-#unless FileTest.exists?("#{web_path}/.rvm")
-    bash "Install latest RVM." do
-        code <<-EOH
-            su - #{web_user} -c "curl -L get.rvm.io | bash -s stable"
-            exit 0
-        EOH
-    end
+node['rbenv']['user_installs'] = [
+  { 'user'    => web_user,
+    'rubies'  => [ruby_version],
+      'global'  => ruby_version
+   }
+]
+
+node['rbenv']['gems'] = {
+  ruby_version => [
+    { 'name'    => web_user },
+      { 'name'    => 'bundler' }
+  ]
+}
+
+include_recipe "rbenv::user"
+
+
+#rbenv_script "migrate_rails_database" do
+#  rbenv_version "1.8.7-p352"
+#  user "deploy"
+#  group "deploy"
+#  cwd "/srv/webapp/current"
+#  code %{rake RAILS_ENV=production db:migrate}
 #end
 
-# INSTALL RUBY AND GEM
-#unless FileTest.exists?("#{web_path}/.rvm/rubies/default/bin/ruby")
-  bash "Install Ruby version #{ruby_version}." do
-      code <<-EOH
-          su - #{web_user} -c "source #{web_path}/.rvm/scripts/rvm && rvm install #{ruby_version}"
-          exit 0
-      EOH
-  end
-#end
-
-# SET DEFAULT RUBY
-# unless FileTest.exists?("#{web_path}/.rvm/rubies/default/bin/ruby")
-  bash "Set default Ruby version #{ruby_version}." do
-      code <<-EOH
-          su - #{web_user} -c "rvm use --default #{ruby_version}"
-          exit 0
-      EOH
-  end
-#end
-
-# INSTALL THE BUNDLER GEM
-bash "gem install bundler" do
-    code <<-EOH
-        su - #{web_user} -c "gem install bundler --no-rdoc --no-ri"
-    EOH
-end
-
-bash "gem install rake" do
-    code <<-EOH
-        su - #{web_user} -c "gem install rake --no-rdoc --no-ri"
-    EOH
-end
-
-#unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
+unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
     remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
         source web_download
         checksum web_checksum
@@ -126,12 +104,6 @@ end
     log "Downloaded, installed and configured the Graylog2 Web binary files in #{web_path}/#{web_version}." do
         action :nothing
     end
-#end
-
-bash "bundle install graylog2" do
-    code <<-EOH
-        su - #{web_user} -c "bundle install"
-    EOH
 end
 
 execute "graylog2-web-interface owner-change" do
@@ -155,8 +127,3 @@ cron "Graylog2 send stream subscriptions" do
     action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
     command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
 end
-
-package "build-essential"
-package "autoconf"
-package "automake"
-
