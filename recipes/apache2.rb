@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+execute "apt-get update"
+
 include_recipe "apache2"
 include_recipe "apache2::mod_ssl"
 include_recipe "apache2::mod_rewrite"
@@ -25,7 +27,7 @@ include_recipe "apache2::mod_rewrite"
 
 template "apache-vhost-conf" do
   path "/etc/apache2/sites-available/graylog2"
-  source "graylog2.apache2.erb"
+  source "apache2.erb"
   mode 0644
 end
 

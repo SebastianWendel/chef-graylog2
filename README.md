@@ -4,6 +4,13 @@ Description
 Dependencies
 =======
 
+RVM
+-------
+[https://github.com/fnichol/chef-rvm]
+
+Known Issues:
+[https://github.com/fnichol/chef-rvm/pull/95]
+
 MongoDB
 -------
 [https://github.com/edelight/chef-cookbooks]
