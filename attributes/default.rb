@@ -50,7 +50,6 @@ default['graylog2']['server_port'] = 5140
 default['graylog2']['syslog4j_path'] = "/usr/share/syslog4j"
 
 # webfrontend config
-#default['graylog2']['ruby_version'] = "1.9.3"
 default['graylog2']['ruby_version'] = "1.9.3-p194"
 #default['graylog2']['web_path'] = "/var/www/graylog2-web-interface"
 default['graylog2']['web_path'] = "/home/graylog2-web"

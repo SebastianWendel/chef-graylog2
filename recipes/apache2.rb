@@ -21,7 +21,7 @@ include_recipe "apache2"
 include_recipe "apache2::mod_ssl"
 include_recipe "apache2::mod_rewrite"
 
-package "libapache2-mod-passenger"
+#package "libapache2-mod-passenger"
 
 template "apache-vhost-conf" do
   path "/etc/apache2/sites-available/graylog2"

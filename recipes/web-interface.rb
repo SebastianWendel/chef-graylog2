@@ -27,62 +27,84 @@ web_version      = node['graylog2']['web_version']
 web_file         = node['graylog2']['web_file']
 web_checksum     = node['graylog2']['web_checksum']
 
+# CREATE GROUPS
+#group web_group do
+#    system true
+#end
+
+# CREATE FOLDER
+#directory web_path do
+#    action :create
+#end
+
+# SET FOLDER PERMISSIONS
+#directory web_path do
+#    owner web_user
+#    group web_group
+#    mode "0755"
+#end
+
+#node['rbenv']['user_installs'] = [
+#  { 'user'      => web_user,
+#    'rubies'    => [ruby_version],
+#      'global'  => ruby_version
+#   }
+#]
+
+#node['rbenv']['gems'] = {
+#  ruby_version  => [
+#    { 'name'    => web_user },
+#      { 'name'  => 'bundler' },
+#      { 'name'  => 'passenger' }
+#  ]
+#}
+
+#node['rbenv']['system_install'] = [
+#  { 'user'      => web_user,
+#    'rubies'    => [ruby_version],
+#      'global'  => ruby_version,
+#      'gems'    => {
+#        ruby_version => [
+#          { 'name' => 'bundler' },
+#          { 'name' => 'passenger' }
+#        ]
+#      }
+#  }
+#]
+
 # DEPENDENCIES COOKBOOKS
-include_recipe "graylog2::apache2"
+#include_recipe "graylog2::apache2"
 include_recipe "ruby_build"
+include_recipe "rbenv::system_install"
 
 # DEPENDENCIES PACKAGES
-package "postfix"
-
-# CREATE GROUPS
-group web_group do
-    system true
-end
+#package "postfix"
 
 # CREATE USER
 user web_user do
   home web_path
   comment "services user for thr graylog2-web-interface"
-  gid web_group
+  supports :manage_home => true
   shell "/bin/bash"
 end
 
-# CREATE FOLDER
-directory web_path do
-    action :create
+rbenv_ruby ruby_version do 
+  user web_user
 end
 
-# SET FOLDER PERMISSIONS
-directory web_path do
-    owner web_user
-    group web_group
-    mode "0755"
+rbenv_rehash "Rehashing #{web_user} rbenv" do
+  user web_user
 end
 
-node['rbenv']['user_installs'] = [
-  { 'user'    => web_user,
-    'rubies'  => [ruby_version],
-      'global'  => ruby_version
-   }
-]
+rbenv_global ruby_version do
+  user web_user
+end
 
-node['rbenv']['gems'] = {
-  ruby_version => [
-    { 'name'    => web_user },
-      { 'name'    => 'bundler' }
-  ]
-}
+rbenv_gem "bundler" do
+  user web_user
+end
 
-include_recipe "rbenv::user"
-
-
-#rbenv_script "migrate_rails_database" do
-#  rbenv_version "1.8.7-p352"
-#  user "deploy"
-#  group "deploy"
-#  cwd "/srv/webapp/current"
-#  code %{rake RAILS_ENV=production db:migrate}
-#end
+=begin
 
 unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
     remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
@@ -127,3 +149,5 @@ cron "Graylog2 send stream subscriptions" do
     action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
     command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
 end
+
+=end
