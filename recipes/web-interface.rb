@@ -29,14 +29,32 @@ web_file          = node['graylog2']['web_file']
 web_checksum      = node['graylog2']['web_checksum']
 
 # COOKBOOK DEPENDENCIES
-include_recipe "graylog2::apache2"
+execute "apt-get update"
+include_recipe "apache2"
+include_recipe "apache2::mod_ssl"
+include_recipe "apache2::mod_rewrite"
 
 # PACKAGE DEPENDENCIES
 package "postfix"
 package "apache2-dev"
 package "libcurl4-openssl-dev"
 
-# CREATE GROUPS
+# ADD GRAYLOG2 APACHE CONFIG
+template "Added Graylog2 Web-Interface Apache config." do
+  path "/etc/apache2/sites-available/graylog2"
+  source "apache2.erb"
+  mode 0644
+end
+
+# DISABLE DEFAULT APACHE SITE
+apache_site "000-default" do
+  enable false
+end
+
+# ENABLE GRAYLOG2 APACHE SITE
+apache_site "graylog2"
+
+# CREATE GROUP
 group web_group do
   system true
 end
@@ -50,7 +68,7 @@ user web_user do
   shell "/bin/bash"
 end
 
-# INSTALL GRAYLOG2-WEBINTERFACE SOURCES IF NOT EXISTS
+# INSTALL SOURCE FILE IF NOT EXISTS
 unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
   remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
     source web_download
@@ -75,31 +93,38 @@ unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
 end
 
 # CREATE GENERAL CONFIG-FILE
-template "#{web_path}/current/config/general.yml" do
-  path "#{web_path}/current/config/mongoid.yml"
-  owner "nobody"
-  group "nogroup"
+template "Create graylog2-web general config." do
+  path "#{web_path}/current/config/general.yml"
+  source "general.yml.erb"
+  owner web_user
+  group web_group
   mode 0644
 end
 
 # CREATE MONGODB CONFIG-FILE
-template "graylog2-web mongodb config" do
+template "Create graylog2-web mongodb config." do
   path "#{web_path}/current/config/mongoid.yml"
   source "mongoid.yml.erb"
+  owner web_user
+  group web_group
   mode 0644
 end
 
 # CREATE ELASTICSEARCH CONFIG-FILE
-template "graylog2-web indexer config" do
+template "Create graylog2-web indexer config." do
   path "#{web_path}/current/config/indexer.yml"
   source "indexer.yml.erb"
+  owner web_user
+  group web_group
   mode 0644
 end
 
 # CREATE EMAIL-SERVER CONFIG-FILE
-template "graylog2-web email config" do
+template "Create graylog2-web email config." do
   path "#{web_path}/current/config/email.yml"
   source "email.yml.erb"
+  owner web_user
+  group web_group
   mode 0644
 end
 
@@ -126,7 +151,7 @@ rvm_gem "passenger" do
   version passenger_version
 end
 
-# TAKE OWNERSHIP OF ALL FILES
+# TAKE OWNERSHIP OF EVERTHING
 execute "graylog2-web-interface owner-change" do
     command "chown -Rf #{web_user}:#{web_group} #{web_path}"
 end
@@ -167,4 +192,9 @@ end
 # RELOAD APACHE FOR CONFIG CHANGES
 service "apache2" do 
   action :reload
+end
+
+# NOTIFICATION FOR THE FINISHED INSTALLATION
+log "Graylog2 Web-Interface s successfully installed and configured." do
+  action :nothing
 end

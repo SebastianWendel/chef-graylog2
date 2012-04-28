@@ -6,6 +6,8 @@ version           "0.0.22"
 recipe            "graylog2", "Installs and configures Graylog2"
 
 supports "ubuntu"
+depends "logrotate"
+depends "rvm"
 depends "apt"
 depends "java"
 depends "apache2"
