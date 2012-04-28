@@ -33,12 +33,8 @@
   PassengerRoot <%= node[:graylog2][:web_path] %>/.rvm/gems/<%= node[:graylog2][:ruby_version] %>/gems/passenger-<%= node[:graylog2][:passenger_version] %>
   PassengerRuby <%= node[:graylog2][:web_path] %>/.rvm/wrappers/<%= node[:graylog2][:ruby_version] %>/ruby
 
-  # 0: Show only errors and warnings.
-  # 1: Show the most important debugging information.
-  # 2: Show more debugging information.
-  # 3: Show even more debugging information.
-  PassengerLogLevel 2
-  PassengerDebugLogFile /var/log/apache2/graylog2-web-error.log
+  PassengerLogLevel 0
+  PassengerDebugLogFile /var/log/apache2/graylog2-web-pessenger-error.log
 
   <Directory <%= node[:graylog2][:web_path] %>/current/public>
     Allow from all
