@@ -52,13 +52,12 @@ default['graylog2']['syslog4j_path'] = "/usr/share/syslog4j"
 # webfrontend config
 default['graylog2']['ruby_version'] = "ruby-1.9.3-p125"
 default['graylog2']['passenger_version'] = "3.0.12"
-default['graylog2']['web_path'] = "/var/www/graylog2-web-interface"
-#default['graylog2']['web_path'] = "/home/graylog2-web"
+default['graylog2']['web_path'] = "/home/graylog2-web" # note that rvm doesn't take any different
 default['graylog2']['web_user'] = "graylog2-web"
 default['graylog2']['web_group'] = "graylog2-web"
 
 # mongodb config
-default['graylog2']['mongo_host'] = "localhost"
+default['graylog2']['mongo_host'] = "127.0.0.1"
 default['graylog2']['mongo_port'] = 27017
 default['graylog2']['mongo_maxconnections'] = 150
 default['graylog2']['mongo_database'] = "graylog2"
