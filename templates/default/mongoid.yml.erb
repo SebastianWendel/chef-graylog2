@@ -4,8 +4,8 @@
 #
 
 production:
-  host: <%= node[:graylog2][:mongo_host] %>
-  port: <%= node[:graylog2][:mongo_port] %>
-  username: <%= node[:graylog2][:mongo_user] %>
-  password: <%= node[:graylog2][:mongo_passwd] %>
-  database: <%= node[:graylog2][:mongo_database] %>
+  host: <%= node['graylog2']['mongo_host'] %>
+  port: <%= node['graylog2']['mongo_port'] %>
+  username: <%= node['graylog2']['mongo_user'] %>
+  password: <%= node['graylog2']['mongo_passwd'] %>
+  database: <%= node['graylog2']['mongo_database'] %>

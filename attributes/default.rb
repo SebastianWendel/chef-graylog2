@@ -64,7 +64,8 @@ default['graylog2']['email_port'] = "25"
 default['graylog2']['email_auth'] = "plain" # plain, login, cram_md5 - Comment out or remove to use no auth                         
 default['graylog2']['email_user'] = nil
 default['graylog2']['email_passwd'] = nil
-default['graylog2']['email_domain'] = "#{node['fqdn']}"
+default['graylog2']['email_address'] = "graylog2@#{node['fqdn']}" 
+default['graylog2']['email_domain'] = node['fqdn']
 
 # MONGODB CONFIG
 default['graylog2']['mongo_host'] = "127.0.0.1"
@@ -81,7 +82,7 @@ default['graylog2']['elastic_host'] = "127.0.0.1"
 default['graylog2']['elastic_port'] = 9200
 default['graylog2']['elastic_index'] = "graylog2"
 
-# NOTIFI CRONS CONFIG
+# NOTIFY CRONS CONFIG
 default['graylog2']['send_stream_alarms'] = true
 default['graylog2']['send_stream_subscriptions'] = true
 default['graylog2']['stream_alarms_cron_minute'] = "*/15"
