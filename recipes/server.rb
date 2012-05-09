@@ -21,29 +21,24 @@ include_recipe "java"
 include_recipe "logrotate"
 include_recipe "mongodb"
 
-server_storage      = node['graylog2']['server_storage']
-server_user         = node['graylog2']['server_user']
-server_group        = node['graylog2']['server_group']
-server_path         = node['graylog2']['server_path']
-server_download     = node['graylog2']['server_download']
-server_version      = node['graylog2']['server_version']
-server_file         = node['graylog2']['server_file']
-server_checksum     = node['graylog2']['server_checksum']
+server_storage              = node['graylog2']['server_storage']
+server_user                 = node['graylog2']['server_user']
+server_group                = node['graylog2']['server_group']
+server_path                 = node['graylog2']['server_path']
+server_etc                  = node['graylog2']['server_etc']
+server_logs                 = node['graylog2']['server_logs']
+server_pid                  = node['graylog2']['server_pid']
+server_lock                 = node['graylog2']['server_lock']
+server_download             = node['graylog2']['server_download']
+server_version              = node['graylog2']['server_version']
+server_file                 = node['graylog2']['server_file']
+server_checksum             = node['graylog2']['server_checksum']
 
-syslog4j_version    = node['graylog2']['syslog4j_version']
-syslog4j_file       = node['graylog2']['syslog4j_file']
-syslog4j_download   = node['graylog2']['syslog4j_download']
-syslog4j_checksum   = node['graylog2']['syslog4j_checksum']
-syslog4j_path       = node['graylog2']['syslog4j_path']
-
-if (server_storage == "elasticsearch")
-    include_recipe "elasticsearch"
-end
-
-template "/etc/graylog2.conf" do
-    source "graylog2.conf.erb"
-    mode 0644
-end
+servicewrapper_path         = node['graylog2']['servicewrapper_path'] 
+servicewrapper_download     = node['graylog2']['servicewrapper_download']
+servicewrapper_version      = node['graylog2']['servicewrapper_version']
+servicewrapper_file         = node['graylog2']['servicewrapper_file']
+servicewrapper_checksum     = node['graylog2']['servicewrapper_checksum']
 
 group server_group do
     system true
@@ -53,21 +48,26 @@ user server_user do
     home server_path
     comment "services user for graylog2-server"
     gid server_group
-    #shell "/bin/false"
     system true
 end
 
-log "Created service user #{server_user} and group #{server_group} to run graylog2." do
-    action :nothing
+[server_path, server_etc].each do |folder|
+  directory folder do
+    owner "root"
+    group "root"
+    mode "0755"
+  end
 end
 
-unless FileTest.exists?("#{server_path}/graylog2-server-#{server_version}")
-    directory server_path do
-        owner server_user
-        group server_group
-        mode 0755
-    end
+[server_pid, server_lock, server_logs].each do |folder|
+  directory folder do
+    owner server_user
+    group server_group
+    mode "0755"
+  end
+end
 
+unless FileTest.exists?(server_path)
     remote_file "#{Chef::Config[:file_cache_path]}/#{server_file}" do
         source server_download
         checksum server_checksum
@@ -77,55 +77,50 @@ unless FileTest.exists?("#{server_path}/graylog2-server-#{server_version}")
     bash "install graylog2 sources #{server_file}" do
         cwd Chef::Config[:file_cache_path]
         code <<-EOH
-            tar -zxf #{server_file} -C  #{server_path}
+          tar -zxf #{server_file} -C  #{server_path}
         EOH
     end
-
-    link "#{server_path}/current" do
-        to "#{server_path}/graylog2-server-#{server_version}"
-    end
-
-    directory server_path do
-        recursive true
-        owner server_user
-        group server_group
-        mode 0755
-    end
-
-    log "Downloaded, installed and configured the Graylog2 binary files in #{server_path}/#{server_version}." do
-        action :nothing
-    end
 end
 
-unless FileTest.exists?("#{syslog4j_path}/#{syslog4j_version}")
-    directory syslog4j_path do
-        mode 0755
-    end
+unless FileTest.exists?("#{server_path}/service")
+  remote_file "#{Chef::Config[:file_cache_path]}/#{servicewrapper_file}" do
+    source servicewrapper_download
+    checksum servicewrapper_checksum
+    action :create_if_missing
+  end
 
-    remote_file "#{syslog4j_path}/#{syslog4j_file}" do
-        source syslog4j_download
-        checksum syslog4j_checksum
-        action :create_if_missing
-    end
-
-    link "#{syslog4j_path}/syslog4j-current-bin.jar" do
-        to "#{syslog4j_path}/#{syslog4j_file}"
-    end
-
-    log "Downloaded, installed and configured the syslog4j binary files for graylog2 logging in #{syslog4j_path}/#{syslog4j_version}." do
-        action :nothing
-    end
+  bash "extract java service wrapper" do
+    cwd Chef::Config[:file_cache_path]
+    code <<-EOH
+      tar -zxf #{servicewrapper_file} 
+      mv wrapper-delta-pack-#{servicewrapper_version} #{server_path}/service
+    EOH
+  end
+end
+               
+template "/etc/init.d/graylog2-server" do
+  source "graylog2-server-init.erb"
+  owner "root"
+  group "root"
+  mode 0755
 end
 
-directory "/var/log/graylog2-server" do
-    owner server_user
-    group server_group
-    mode 0755
+template "#{server_etc}/graylog2-service.conf" do
+  source "graylog2-service.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
 end
 
-directory "/var/run/graylog2-server" do
-    owner server_user
-    group server_group
+template "#{server_etc}/graylog2.conf" do
+    source "graylog2.conf.erb"
+    mode 0644
+end
+
+template "/etc/init.d/graylog2-server" do
+    source "graylog2.init.erb"
+    owner "root"
+    group "root"
     mode 0755
 end
 
@@ -137,18 +132,7 @@ logrotate_app "graylog2-server" do
   create "644 root adm"
 end
 
-template "/etc/init.d/graylog2" do
-    source "graylog2.init.erb"
-    owner "root"
-    group "root"
-    mode 0755
-end
-
-service "graylog" do
-  supports :restart => true, :status => true
-  action [:enable, :start]
-end
-
-log "Installed the Graylog2 init file /etc/init.d/graylog2, change the runlevel and startet the service." do
-    action :nothing
-end
+#service "graylog2-server" do
+#  supports :restart => true
+#  action [:enable, :start]
+#end

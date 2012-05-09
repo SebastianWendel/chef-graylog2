@@ -27,6 +27,16 @@ default['graylog2']['server_file'] = "graylog2-server-#{node['graylog2']['server
 default['graylog2']['server_download'] = "#{node['graylog2']['project_url']}/graylog2-server/#{node['graylog2']['server_file']}"
 default['graylog2']['server_checksum'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
 
+# SERVICE-WRAPPER BINARY                                                                                                                                                          
+
+#http://wrapper.tanukisoftware.com/download/3.5.14/wrapper-delta-pack-3.5.14.tar.gz
+
+default['graylog2']['servicewrapper_version'] = "3.5.14"
+default['graylog2']['servicewrapper_url'] = "http://wrapper.tanukisoftware.com/download/#{node['graylog2']['servicewrapper_version']}/"
+default['graylog2']['servicewrapper_file'] = "wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}.tar.gz"
+default['graylog2']['servicewrapper_download'] = "#{node['graylog2']['servicewrapper_url']}/#{node['graylog2']['servicewrapper_file']}/"
+default['graylog2']['servicewrapper_checksum'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
+
 # WEB BINARY
 default['graylog2']['web_version'] = "0.9.6p1-RC1"
 default['graylog2']['web_file'] = "graylog2-web-interface-#{node['graylog2']['web_version']}.tar.gz"
@@ -41,9 +51,13 @@ default['graylog2']['syslog4j_checksum'] = "9c9f44fb457fc3157f5dab7e9c94b027e964
 
 # SERVER CONFIG
 default['graylog2']['server_path'] = "/usr/share/graylog2-server"
-default['graylog2']['server_user'] = "graylog2-server"
-default['graylog2']['server_group'] = "graylog2-server"
-default['graylog2']['server_storage'] = "elasticsearch"
+default['graylog2']['server_etc'] = "/etc/graylog2"
+default['graylog2']['server_pid'] = "/var/run/graylog2"
+default['graylog2']['server_lock'] = "/var/lock/graylog2"
+default['graylog2']['server_logs'] = "/var/log/graylog2"
+default['graylog2']['server_user'] = "graylog2"
+default['graylog2']['server_group'] = "graylog2"
+default['graylog2']['server_storage'] = "graylog2"
 default['graylog2']['server_port'] = 5140
 
 # SYSLOG4J CONFIG
