@@ -1,35 +1,30 @@
 #! /bin/sh
 
-# RESOLVE and SET $ES_HOME
+#
+# Copyright (c) 1999, 2011 Tanuki Software, Ltd.
+# http://www.tanukisoftware.com
+# All rights reserved.
+#
+# This software is the proprietary information of Tanuki Software.
+# You shall use it only in accordance with the terms of the
+# license agreement you entered into with Tanuki Software.
+# http://wrapper.tanukisoftware.com/doc/english/licenseOverview.html
+#
+# Java Service Wrapper sh script.  Suitable for starting and stopping
+#  wrapped Java applications on UNIX platforms.
+#
 
-SCRIPT="$0"
-
-# SCRIPT may be an arbitrarily deep series of symlinks. Loop until we have the concrete path.
-while [ -h "$SCRIPT" ] ; do
-  ls=`ls -ld "$SCRIPT"`
-  # Drop everything prior to ->
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    SCRIPT="$link"
-  else
-    SCRIPT=`dirname "$SCRIPT"`/"$link"
-  fi
-done
-
-# determine graylog2 home
-ES_HOME="<%= node['GRAYLOG2']['SERVER_PATH'] %>"
-
-# make ELASTICSEARCH_HOME absolute
-export ES_HOME=`cd $ES_HOME; pwd`
-
+#-----------------------------------------------------------------------------
+# These settings can be modified to fit the needs of your application
+# Optimized for use with version 3.5.14 of the Wrapper.
 
 # Application
-APP_NAME="graylog2"
-APP_LONG_NAME="ElasticSearch"
+APP_NAME="graylog2-server"
+APP_LONG_NAME="Graylog2 Logserver"
 
 # Wrapper
-WRAPPER_CMD="$ES_HOME/bin/service/exec/graylog2"
-WRAPPER_CONF="<%= node['GRAYLOG2']['SERVER_ETC'] %>/graylog2.conf"
+WRAPPER_CMD="<%= node['GRAYLOG2']['SERVER_PATH'] %>/bin/wrapper"
+WRAPPER_CONF="<%= node['GRAYLOG2']['SERVER_ETC'] %>/graylog2-service.conf"
 
 # Priority at which to run the wrapper.  See "man nice" for valid priorities.
 #  nice is only used if a priority is specified.
@@ -84,11 +79,7 @@ WAIT_FOR_STARTED_TIMEOUT=120
 # NOTE - This will set the user which is used to run the Wrapper as well as
 #  the JVM and is not useful in situations where a privileged resource or
 #  port needs to be allocated prior to the user being changed.
-RUN_AS_USER=<%= node['GRAYLOG2']['SERVER_USER'] %>
-
-# Specify the number of open files ulimit for the above user
-# recommended value: 32000
-ULIMIT_N=<%= node['GRAYLOG2']['SERVER_ULIMIT'] %>
+RUN_AS_USER="<%= node['GRAYLOG2']['SERVER_USER'] %>"
 
 # By default we show a detailed usage block.  Uncomment to show brief usage.
 #BRIEF_USAGE=true
@@ -108,13 +99,13 @@ PLIST_DOMAIN=org.tanukisoftware.wrapper
 # Initialization block for the install_initd and remove_initd scripts used by
 #  SUSE linux distributions.
 ### BEGIN INIT INFO
-# Provides: @app.name@
+# Provides: graylog2-server
 # Required-Start: $local_fs $network $syslog
 # Should-Start: 
 # Required-Stop:
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: @app.long.name@
+# Short-Description: graylog2 logging server
 # Description: @app.description@
 ### END INIT INFO
 
@@ -211,7 +202,7 @@ COMMANDFILE="$PIDDIR/$APP_NAME.command"
 STATUSFILE="$PIDDIR/$APP_NAME.status"
 JAVASTATUSFILE="$PIDDIR/$APP_NAME.java.status"
 PIDFILE="$PIDDIR/$APP_NAME.pid"
-LOCKDIR="<%= node['GRAYLOG2']['SERVER_LOCK'] %>"
+LOCKDIR="/var/lock/subsys"
 LOCKFILE="$LOCKDIR/$APP_NAME"
 pid=""
 
@@ -578,12 +569,6 @@ checkUser() {
             ADDITIONAL_PARA="$ADDITIONAL_PARA \"$1\""
             shift
         done
-
-        # Set ulimit if specified.
-        if [ "X$ULIMIT_N" != "X" ]
-            then
-            ulimit -n $ULIMIT_N
-        fi
 
         # Use "runuser" if this exists.  runuser should be used on RedHat in preference to su.
         #

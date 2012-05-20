@@ -22,7 +22,7 @@
 default['GRAYLOG2']['PROJECT_URL'] = "https://github.com/downloads/Graylog2"
 
 # SERVER BINARY
-default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1-RC1"
+default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1-RC2"
 default['GRAYLOG2']['SERVER_FILE'] = "graylog2-server-#{node['GRAYLOG2']['SERVER_VERSION']}.tar.gz"
 default['GRAYLOG2']['SERVER_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-SERVER/#{node['GRAYLOG2']['SERVER_FILE']}"
 default['GRAYLOG2']['SERVER_CHECKSUM'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
@@ -35,7 +35,7 @@ default['GRAYLOG2']['SERVICEWRAPPER_DOWNLOAD'] = "#{node['GRAYLOG2']['SERVICEWRA
 default['GRAYLOG2']['SERVICEWRAPPER_CHECKSUM'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
 
 # WEB BINARY
-default['GRAYLOG2']['WEB_VERSION'] = "0.9.6p1-RC1"
+default['GRAYLOG2']['WEB_VERSION'] = "0.9.6p1-RC2"
 default['GRAYLOG2']['WEB_FILE'] = "graylog2-web-interface-#{node['GRAYLOG2']['WEB_VERSION']}.tar.gz"
 default['GRAYLOG2']['WEB_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-WEB-INTERFACE/#{node['GRAYLOG2']['WEB_FILE']}"
 default['GRAYLOG2']['WEB_CHECKSUM'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"
@@ -74,8 +74,8 @@ default['GRAYLOG2']['EMAIL_PORT'] = "25"
 default['GRAYLOG2']['EMAIL_AUTH'] = "plain" # plain, login, cram_md5 - Comment out or remove to use no auth                         
 default['GRAYLOG2']['EMAIL_USER'] = nil
 default['GRAYLOG2']['EMAIL_PASSWD'] = nil
-default['GRAYLOG2']['EMAIL_ADDRESS'] = "GRAYLOG2@#{node['FQDN']}" 
-default['GRAYLOG2']['EMAIL_DOMAIN'] = node['FQDN']
+default['GRAYLOG2']['EMAIL_ADDRESS'] = "graylog2@#{node['fqdn']}" 
+default['GRAYLOG2']['EMAIL_DOMAIN'] = node['fqdn']
 
 # MONGODB CONFIG
 default['GRAYLOG2']['MONGO_HOST'] = "127.0.0.1"

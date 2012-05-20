@@ -18,7 +18,7 @@
 #
 
 include_recipe "java"
-#include_recipe "logrotate"
+include_recipe "logrotate"
 include_recipe "mongodb"
 
 SERVER_USER                 = node['GRAYLOG2']['SERVER_USER']
@@ -77,7 +77,7 @@ unless FileTest.exists?(SERVER_PATH)
     cwd Chef::Config[:file_cache_PATH]
     code <<-EOH
       tar -zxf #{SERVER_FILE}
-      rm -rf graylog2-server-#{SERVER_VERSION}/build_date graylog2-server-#{SERVER_VERSION}/COPYING graylog2-server-#{SERVER_VERSION}/graylog2.conf.example graylog2-server-#{SERVER_VERSION}/README graylog2-server-#{SERVER_VERSION}/doc
+      rm -rf graylog2-server-#{SERVER_VERSION}/build_date graylog2-server-#{SERVER_VERSION}/bin graylog2-server-#{SERVER_VERSION}/COPYING graylog2-server-#{SERVER_VERSION}/graylog2.conf.example graylog2-server-#{SERVER_VERSION}/README graylog2-server-#{SERVER_VERSION}/doc
       mv -f graylog2-server-#{SERVER_VERSION}/* #{SERVER_PATH}
       chown -Rf root:root #{SERVER_PATH}
     EOH
@@ -102,6 +102,8 @@ unless FileTest.exists?("#{SERVER_PATH}/lib")
   end
 end
 
+# http://sphughes.com/2012/01/06/a-more-secure-graylog2-server-install/
+
 link "#{SERVER_PATH}/config" do
   to SERVER_ETC
 end
@@ -124,13 +126,13 @@ template "#{SERVER_ETC}/graylog2-service.conf" do
   mode 0644
 end
 
-template "#{SERVER_ETC}/graylog2.conf" do
-    source "graylog2.conf.erb"
+template "#{SERVER_ETC}/graylog2-server.conf" do
+    source "graylog2-server.conf.erb"
     mode 0644
 end
 
 template "/etc/init.d/graylog2-server" do
-    source "graylog2.init.erb"
+    source "graylog2-server-init.erb"
     owner "root"
     group "root"
     mode 0755
