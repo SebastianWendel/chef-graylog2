@@ -1,5 +1,5 @@
-set.default.ES_HOME=<%= node['graylog2']['server_path'] %>
-set.default.ES_HEAP_SIZE=<%= node['graylog2']['mem_heap'] %>
+set.default.ES_HOME=<%= node['GRAYLOG2']['SERVER_PATH'] %>
+set.default.ES_HEAP_SIZE=<%= node['GRAYLOG2']['MEM_HEAP'] %>
 
 #********************************************************************
 # Wrapper Timeout Properties
@@ -68,7 +68,7 @@ wrapper.console.format=PM
 wrapper.console.loglevel=INFO
 
 # Log file to use for wrapper output logging.
-wrapper.logfile=<%= node['graylog2']['server_logs'] %>/service.log
+wrapper.logfile=<%= node['GRAYLOG2']['SERVER_LOGS'] %>/service.log
 
 # Format of output for the log file.  (See docs for formats)
 wrapper.logfile.format=LPTM

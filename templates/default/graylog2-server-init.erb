@@ -17,7 +17,7 @@ while [ -h "$SCRIPT" ] ; do
 done
 
 # determine graylog2 home
-ES_HOME="<%= node['graylog2']['server_path'] %>"
+ES_HOME="<%= node['GRAYLOG2']['SERVER_PATH'] %>"
 
 # make ELASTICSEARCH_HOME absolute
 export ES_HOME=`cd $ES_HOME; pwd`
@@ -29,14 +29,14 @@ APP_LONG_NAME="ElasticSearch"
 
 # Wrapper
 WRAPPER_CMD="$ES_HOME/bin/service/exec/graylog2"
-WRAPPER_CONF="<%= node['graylog2']['server_etc'] %>/graylog2.conf"
+WRAPPER_CONF="<%= node['GRAYLOG2']['SERVER_ETC'] %>/graylog2.conf"
 
 # Priority at which to run the wrapper.  See "man nice" for valid priorities.
 #  nice is only used if a priority is specified.
 PRIORITY=
 
 # Location of the pid file.
-PIDDIR="<%= node['graylog2']['server_pid'] %>"
+PIDDIR="<%= node['GRAYLOG2']['SERVER_PID'] %>"
 
 # FIXED_COMMAND tells the script to use a hard coded action rather than
 # expecting the first parameter of the command line to be the command.
@@ -84,11 +84,11 @@ WAIT_FOR_STARTED_TIMEOUT=120
 # NOTE - This will set the user which is used to run the Wrapper as well as
 #  the JVM and is not useful in situations where a privileged resource or
 #  port needs to be allocated prior to the user being changed.
-RUN_AS_USER=<%= node['graylog2']['server_user'] %>
+RUN_AS_USER=<%= node['GRAYLOG2']['SERVER_USER'] %>
 
 # Specify the number of open files ulimit for the above user
 # recommended value: 32000
-ULIMIT_N=<%= node['graylog2']['server_ulimit'] %>
+ULIMIT_N=<%= node['GRAYLOG2']['SERVER_ULIMIT'] %>
 
 # By default we show a detailed usage block.  Uncomment to show brief usage.
 #BRIEF_USAGE=true
@@ -211,7 +211,7 @@ COMMANDFILE="$PIDDIR/$APP_NAME.command"
 STATUSFILE="$PIDDIR/$APP_NAME.status"
 JAVASTATUSFILE="$PIDDIR/$APP_NAME.java.status"
 PIDFILE="$PIDDIR/$APP_NAME.pid"
-LOCKDIR="<%= node['graylog2']['server_lock'] %>"
+LOCKDIR="<%= node['GRAYLOG2']['SERVER_LOCK'] %>"
 LOCKFILE="$LOCKDIR/$APP_NAME"
 pid=""
 

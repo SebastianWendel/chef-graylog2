@@ -18,15 +18,15 @@
 #
 
 # LOCAL VARIABLES
-ruby_version      = node['graylog2']['ruby_version']
-passenger_version = node['graylog2']['passenger_version']
-web_path          = node['graylog2']['web_path']
-web_user          = node['graylog2']['web_user']
-web_group         = node['graylog2']['web_group']
-web_download      = node['graylog2']['web_download']
-web_version       = node['graylog2']['web_version']
-web_file          = node['graylog2']['web_file']
-web_checksum      = node['graylog2']['web_checksum']
+RUBY_VERSION      = node['GRAYLOG2']['RUBY_VERSION']
+PASSENGER_VERSION = node['GRAYLOG2']['PASSENGER_VERSION']
+WEB_PATH          = node['GRAYLOG2']['WEB_PATH']
+WEB_USER          = node['GRAYLOG2']['WEB_USER']
+WEB_GROUP         = node['GRAYLOG2']['WEB_GROUP']
+WEB_DOWNLOAD      = node['GRAYLOG2']['WEB_DOWNLOAD']
+WEB_VERSION       = node['GRAYLOG2']['WEB_VERSION']
+WEB_FILE          = node['GRAYLOG2']['WEB_FILE']
+WEB_CHECKSUM      = node['GRAYLOG2']['WEB_CHECKSUM']
 
 # COOKBOOK DEPENDENCIES
 execute "apt-get update"
@@ -55,138 +55,138 @@ end
 apache_site "graylog2"
 
 # CREATE GROUP
-group web_group do
+group WEB_GROUP do
   system true
 end
 
 # CREATE USER
-user web_user do
-  home web_path
-  gid web_group
+user WEB_USER do
+  home WEB_PATH
+  gid WEB_GROUP
   comment "services user for thr graylog2-web-interface"
   supports :manage_home => true
   shell "/bin/bash"
 end
 
 # INSTALL SOURCE FILE IF NOT EXISTS
-unless FileTest.exists?("#{web_path}/graylog2-web-interface-#{web_version}")
-  remote_file "#{Chef::Config[:file_cache_path]}/#{web_file}" do
-    source web_download
-    checksum web_checksum
+unless FileTest.exists?("#{WEB_PATH}/graylog2-web-interface-#{WEB_VERSION}")
+  remote_file "#{Chef::Config[:file_cache_path]}/#{WEB_FILE}" do
+    source WEB_DOWNLOAD
+    checksum WEB_CHECKSUM
     action :create_if_missing
   end
 
-  bash "install graylog2 sources #{web_file}" do
+  bash "install graylog2 sources #{WEB_FILE}" do
     cwd Chef::Config[:file_cache_path]
     code <<-EOH
-      tar -zxf #{web_file} -C #{web_path}
+      tar -zxf #{WEB_FILE} -C #{WEB_PATH}
     EOH
   end
 
-  link "#{web_path}/current" do
-    to "#{web_path}/graylog2-web-interface-#{web_version}"
+  link "#{WEB_PATH}/current" do
+    to "#{WEB_PATH}/graylog2-web-interface-#{WEB_VERSION}"
   end
 
-  log "Downloaded, installed and configured the Graylog2 Web binary files in #{web_path}/#{web_version}." do
+  log "Downloaded, installed and configured the Graylog2 Web binary files in #{WEB_PATH}/#{WEB_VERSION}." do
     action :nothing
   end
 end
 
 # CREATE GENERAL CONFIG-FILE
 template "Create graylog2-web general config." do
-  path "#{web_path}/current/config/general.yml"
+  path "#{WEB_PATH}/current/config/general.yml"
   source "general.yml.erb"
-  owner web_user
-  group web_group
+  owner WEB_USER
+  group WEB_GROUP
   mode 0644
 end
 
 # CREATE MONGODB CONFIG-FILE
 template "Create graylog2-web mongodb config." do
-  path "#{web_path}/current/config/mongoid.yml"
+  path "#{WEB_PATH}/current/config/mongoid.yml"
   source "mongoid.yml.erb"
-  owner web_user
-  group web_group
+  owner WEB_USER
+  group WEB_GROUP
   mode 0644
 end
 
 # CREATE ELASTICSEARCH CONFIG-FILE
 template "Create graylog2-web indexer config." do
-  path "#{web_path}/current/config/indexer.yml"
+  path "#{WEB_PATH}/current/config/indexer.yml"
   source "indexer.yml.erb"
-  owner web_user
-  group web_group
+  owner WEB_USER
+  group WEB_GROUP
   mode 0644
 end
 
 # CREATE EMAIL-SERVER CONFIG-FILE
 template "Create graylog2-web email config." do
-  path "#{web_path}/current/config/email.yml"
+  path "#{WEB_PATH}/current/config/email.yml"
   source "email.yml.erb"
-  owner web_user
-  group web_group
+  owner WEB_USER
+  group WEB_GROUP
   mode 0644
 end
 
 # INSTALL USER ISOLATED RVM
-node['rvm']['user_installs'] = [
-  { 'user' => web_user }
+node['RVM']['USER_INSTALLS'] = [
+  { 'USER' => WEB_USER }
 ]
 
 include_recipe "rvm::user_install"
 
 # INSTALL USER ISOLATED RUBY
-rvm_ruby ruby_version do
-  user web_user
+rvm_ruby RUBY_VERSION do
+  user WEB_USER
 end
 
 # INSTALL BUNDLER GEM
 rvm_gem "bundler" do
-  user web_user
+  user WEB_USER
 end
 
 # INSTALL PASSENGER GEM
 rvm_gem "passenger" do
-  user web_user
-  version passenger_version
+  user WEB_USER
+  version PASSENGER_VERSION
 end
 
 # TAKE OWNERSHIP OF EVERTHING
 execute "graylog2-web-interface owner-change" do
-    command "chown -Rf #{web_user}:#{web_group} #{web_path}"
+    command "chown -Rf #{WEB_USER}:#{WEB_GROUP} #{WEB_PATH}"
 end
 
 # INSTALL APACHE PASSENGER MODUL IF NOT EXISTS
 rvm_shell "passenger module install" do
-  user web_user
-  group web_group
-  creates "#{web_path}/.rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/ext/apache2/mod_passenger.so"
-  cwd web_path
+  user WEB_USER
+  group WEB_GROUP
+  creates "#{WEB_PATH}/.rvm/gems/#{RUBY_VERSION}/gems/passenger-#{PASSENGER_VERSION}/ext/apache2/mod_passenger.so"
+  cwd WEB_PATH
   code %{passenger-install-apache2-module --auto}
 end
 
 # INSTALL ALL GEM DEPENDENCIES
 rvm_shell "run bundler install" do
-  user web_user
-  group web_group
-  cwd "#{web_path}/current"
+  user WEB_USER
+  group WEB_GROUP
+  cwd "#{WEB_PATH}/current"
   code %{bundle install}
 end
 
 # ADD STREAM ALARM CRON FOR THE USER
 cron "Graylog2 send stream alarms" do
-  user web_user
-  minute node['graylog2']['stream_alarms_cron_minute']
-  action node['graylog2']['send_stream_alarms'] ? :create : :delete
-  command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake streamalarms:send"
+  user WEB_USER
+  minute node['GRAYLOG2']['STREAM_ALARMS_CRON_MINUTE']
+  action node['GRAYLOG2']['SEND_STREAM_ALARMS'] ? :create : :delete
+  command "cd #{WEB_PATH}/current && RAILS_ENV=production bundle exec rake streamalarms:send"
 end
 
 # ADD STREAM SUBSCRIPTION CRON FOR THE USER
 cron "Graylog2 send stream subscriptions" do
-  user web_user
-  minute node['graylog2']['stream_subscriptions_cron_minute']
-  action node['graylog2']['send_stream_subscriptions'] ? :create : :delete
-  command "cd #{web_path}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
+  user WEB_USER
+  minute node['GRAYLOG2']['STREAM_SUBSCRIPTIONS_CRON_MINUTE']
+  action node['GRAYLOG2']['SEND_STREAM_SUBSCRIPTIONS'] ? :create : :delete
+  command "cd #{WEB_PATH}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
 end
 
 # RELOAD APACHE FOR CONFIG CHANGES

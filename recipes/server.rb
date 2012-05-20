@@ -18,40 +18,39 @@
 #
 
 include_recipe "java"
-include_recipe "logrotate"
+#include_recipe "logrotate"
 include_recipe "mongodb"
 
-server_storage              = node['graylog2']['server_storage']
-server_user                 = node['graylog2']['server_user']
-server_group                = node['graylog2']['server_group']
-server_path                 = node['graylog2']['server_path']
-server_etc                  = node['graylog2']['server_etc']
-server_logs                 = node['graylog2']['server_logs']
-server_pid                  = node['graylog2']['server_pid']
-server_lock                 = node['graylog2']['server_lock']
-server_download             = node['graylog2']['server_download']
-server_version              = node['graylog2']['server_version']
-server_file                 = node['graylog2']['server_file']
-server_checksum             = node['graylog2']['server_checksum']
+SERVER_USER                 = node['GRAYLOG2']['SERVER_USER']
+SERVER_GROUP                = node['GRAYLOG2']['SERVER_GROUP']
+SERVER_PATH                 = node['GRAYLOG2']['SERVER_PATH']
+SERVER_ETC                  = node['GRAYLOG2']['SERVER_ETC']
+SERVER_LOGS                 = node['GRAYLOG2']['SERVER_LOGS']
+SERVER_PID                  = node['GRAYLOG2']['SERVER_PID']
+SERVER_LOCK                 = node['GRAYLOG2']['SERVER_LOCK']
+SERVER_DOWNLOAD             = node['GRAYLOG2']['SERVER_DOWNLOAD']
+SERVER_VERSION              = node['GRAYLOG2']['SERVER_VERSION']
+SERVER_FILE                 = node['GRAYLOG2']['SERVER_FILE']
+SERVER_CHECKSUM             = node['GRAYLOG2']['SERVER_CHECKSUM']
 
-servicewrapper_path         = node['graylog2']['servicewrapper_path'] 
-servicewrapper_download     = node['graylog2']['servicewrapper_download']
-servicewrapper_version      = node['graylog2']['servicewrapper_version']
-servicewrapper_file         = node['graylog2']['servicewrapper_file']
-servicewrapper_checksum     = node['graylog2']['servicewrapper_checksum']
+SERVICEWRAPPER_PATH         = node['GRAYLOG2']['SERVICEWRAPPER_PATH'] 
+SERVICEWRAPPER_DOWNLOAD     = node['GRAYLOG2']['SERVICEWRAPPER_DOWNLOAD']
+SERVICEWRAPPER_VERSION      = node['GRAYLOG2']['SERVICEWRAPPER_VERSION']
+SERVICEWRAPPER_FILE         = node['GRAYLOG2']['SERVICEWRAPPER_FILE']
+SERVICEWRAPPER_CHECKSUM     = node['GRAYLOG2']['SERVICEWRAPPER_CHECKSUM']
 
-group server_group do
+group SERVER_GROUP do
     system true
 end
 
-user server_user do
-    home server_path
+user SERVER_USER do
+    home SERVER_PATH
     comment "services user for graylog2-server"
-    gid server_group
+    gid SERVER_GROUP
     system true
 end
 
-[server_path, server_etc].each do |folder|
+[SERVER_PATH, SERVER_ETC].each do |folder|
   directory folder do
     owner "root"
     group "root"
@@ -59,45 +58,58 @@ end
   end
 end
 
-[server_pid, server_lock, server_logs].each do |folder|
+[SERVER_PID, SERVER_LOCK, SERVER_LOGS].each do |folder|
   directory folder do
-    owner server_user
-    group server_group
+    owner SERVER_USER
+    group SERVER_GROUP
     mode "0755"
   end
 end
 
-unless FileTest.exists?(server_path)
-    remote_file "#{Chef::Config[:file_cache_path]}/#{server_file}" do
-        source server_download
-        checksum server_checksum
-        action :create_if_missing
-    end
+unless FileTest.exists?(SERVER_PATH)
+  remote_FILE "#{Chef::Config[:file_cache_PATH]}/#{SERVER_FILE}" do
+    source SERVER_DOWNLOAD
+    checksum SERVER_CHECKSUM
+    action :create_if_missing
+  end
 
-    bash "install graylog2 sources #{server_file}" do
-        cwd Chef::Config[:file_cache_path]
-        code <<-EOH
-          tar -zxf #{server_file} -C  #{server_path}
-        EOH
-    end
+  bash "install graylog2 sources #{SERVER_FILE}" do
+    cwd Chef::Config[:file_cache_PATH]
+    code <<-EOH
+      tar -zxf #{SERVER_FILE}
+      rm -rf graylog2-server-#{SERVER_VERSION}/build_date graylog2-server-#{SERVER_VERSION}/COPYING graylog2-server-#{SERVER_VERSION}/graylog2.conf.example graylog2-server-#{SERVER_VERSION}/README graylog2-server-#{SERVER_VERSION}/doc
+      mv -f graylog2-server-#{SERVER_VERSION}/* #{SERVER_PATH}
+      chown -Rf root:root #{SERVER_PATH}
+    EOH
+  end
 end
 
-unless FileTest.exists?("#{server_path}/service")
-  remote_file "#{Chef::Config[:file_cache_path]}/#{servicewrapper_file}" do
-    source servicewrapper_download
-    checksum servicewrapper_checksum
+unless FileTest.exists?("#{SERVER_PATH}/lib")
+  remote_FILE "#{Chef::Config[:file_cache_PATH]}/#{SERVICEWRAPPER_FILE}" do
+    source SERVICEWRAPPER_DOWNLOAD
+    checksum SERVICEWRAPPER_CHECKSUM
     action :create_if_missing
   end
 
   bash "extract java service wrapper" do
-    cwd Chef::Config[:file_cache_path]
+    cwd Chef::Config[:file_cache_PATH]
     code <<-EOH
-      tar -zxf #{servicewrapper_file} 
-      mv wrapper-delta-pack-#{servicewrapper_version} #{server_path}/service
+      tar -zxf #{SERVICEWRAPPER_FILE} 
+      rm -rf wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/conf wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/src wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/jdoc wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/doc wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/logs wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/jdoc.tar.gz wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/README*.*
+      mv wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/* #{SERVER_PATH}
+      chown -Rf root:root #{SERVER_PATH}
     EOH
   end
 end
-               
+
+link "#{SERVER_PATH}/config" do
+  to SERVER_ETC
+end
+
+link "#{SERVER_PATH}/logs" do
+  to SERVER_LOGS
+end
+
 template "/etc/init.d/graylog2-server" do
   source "graylog2-server-init.erb"
   owner "root"
@@ -105,14 +117,14 @@ template "/etc/init.d/graylog2-server" do
   mode 0755
 end
 
-template "#{server_etc}/graylog2-service.conf" do
+template "#{SERVER_ETC}/graylog2-service.conf" do
   source "graylog2-service.conf.erb"
   owner "root"
   group "root"
   mode 0644
 end
 
-template "#{server_etc}/graylog2.conf" do
+template "#{SERVER_ETC}/graylog2.conf" do
     source "graylog2.conf.erb"
     mode 0644
 end

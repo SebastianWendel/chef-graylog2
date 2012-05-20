@@ -19,85 +19,81 @@
 #
 
 # PROJECT SITE
-default['graylog2']['project_url'] = "https://github.com/downloads/Graylog2"
+default['GRAYLOG2']['PROJECT_URL'] = "https://github.com/downloads/Graylog2"
 
 # SERVER BINARY
-default['graylog2']['server_version'] = "0.9.6p1-RC1"
-default['graylog2']['server_file'] = "graylog2-server-#{node['graylog2']['server_version']}.tar.gz"
-default['graylog2']['server_download'] = "#{node['graylog2']['project_url']}/graylog2-server/#{node['graylog2']['server_file']}"
-default['graylog2']['server_checksum'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
+default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1-RC1"
+default['GRAYLOG2']['SERVER_FILE'] = "graylog2-server-#{node['GRAYLOG2']['SERVER_VERSION']}.tar.gz"
+default['GRAYLOG2']['SERVER_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-SERVER/#{node['GRAYLOG2']['SERVER_FILE']}"
+default['GRAYLOG2']['SERVER_CHECKSUM'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
 
-# SERVICE-WRAPPER BINARY                                                                                                                                                          
-
-#http://wrapper.tanukisoftware.com/download/3.5.14/wrapper-delta-pack-3.5.14.tar.gz
-
-default['graylog2']['servicewrapper_version'] = "3.5.14"
-default['graylog2']['servicewrapper_url'] = "http://wrapper.tanukisoftware.com/download/#{node['graylog2']['servicewrapper_version']}/"
-default['graylog2']['servicewrapper_file'] = "wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}.tar.gz"
-default['graylog2']['servicewrapper_download'] = "#{node['graylog2']['servicewrapper_url']}/#{node['graylog2']['servicewrapper_file']}/"
-default['graylog2']['servicewrapper_checksum'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
+# SERVICE-WRAPPER BINARY
+default['GRAYLOG2']['SERVICEWRAPPER_VERSION'] = "3.5.14"
+default['GRAYLOG2']['SERVICEWRAPPER_URL'] = "http://wrapper.tanukisoftware.com/download/#{node['GRAYLOG2']['SERVICEWRAPPER_VERSION']}/"
+default['GRAYLOG2']['SERVICEWRAPPER_FILE'] = "wrapper-delta-pack-#{node['GRAYLOG2']['SERVICEWRAPPER_VERSION']}.tar.gz"
+default['GRAYLOG2']['SERVICEWRAPPER_DOWNLOAD'] = "#{node['GRAYLOG2']['SERVICEWRAPPER_URL']}/#{node['GRAYLOG2']['SERVICEWRAPPER_FILE']}/"
+default['GRAYLOG2']['SERVICEWRAPPER_CHECKSUM'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
 
 # WEB BINARY
-default['graylog2']['web_version'] = "0.9.6p1-RC1"
-default['graylog2']['web_file'] = "graylog2-web-interface-#{node['graylog2']['web_version']}.tar.gz"
-default['graylog2']['web_download'] = "#{node['graylog2']['project_url']}/graylog2-web-interface/#{node['graylog2']['web_file']}"
-default['graylog2']['web_checksum'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"
+default['GRAYLOG2']['WEB_VERSION'] = "0.9.6p1-RC1"
+default['GRAYLOG2']['WEB_FILE'] = "graylog2-web-interface-#{node['GRAYLOG2']['WEB_VERSION']}.tar.gz"
+default['GRAYLOG2']['WEB_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-WEB-INTERFACE/#{node['GRAYLOG2']['WEB_FILE']}"
+default['GRAYLOG2']['WEB_CHECKSUM'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"
 
 # SYSLOG4J BINARY
-default['graylog2']['syslog4j_version'] = "0.9.46"
-default['graylog2']['syslog4j_file'] = "syslog4j-#{node['graylog2']['syslog4j_version']}-bin.jar"
-default['graylog2']['syslog4j_download'] = "http://syslog4j.org/downloads/#{node['graylog2']['syslog4j_file']}"
-default['graylog2']['syslog4j_checksum'] = "9c9f44fb457fc3157f5dab7e9c94b027e964986545d8ee312380ae3f882a75ed"
+default['GRAYLOG2']['SYSLOG4J_VERSION'] = "0.9.46"
+default['GRAYLOG2']['SYSLOG4J_FILE'] = "syslog4j-#{node['GRAYLOG2']['SYSLOG4J_VERSION']}-bin.jar"
+default['GRAYLOG2']['SYSLOG4J_DOWNLOAD'] = "http://syslog4j.org/downloads/#{node['GRAYLOG2']['SYSLOG4J_FILE']}"
+default['GRAYLOG2']['SYSLOG4J_CHECKSUM'] = "9c9f44fb457fc3157f5dab7e9c94b027e964986545d8ee312380ae3f882a75ed"
 
 # SERVER CONFIG
-default['graylog2']['server_path'] = "/usr/share/graylog2-server"
-default['graylog2']['server_etc'] = "/etc/graylog2"
-default['graylog2']['server_pid'] = "/var/run/graylog2"
-default['graylog2']['server_lock'] = "/var/lock/graylog2"
-default['graylog2']['server_logs'] = "/var/log/graylog2"
-default['graylog2']['server_user'] = "graylog2"
-default['graylog2']['server_group'] = "graylog2"
-default['graylog2']['server_storage'] = "graylog2"
-default['graylog2']['server_port'] = 5140
+default['GRAYLOG2']['SERVER_PATH'] = "/usr/share/graylog2-server"
+default['GRAYLOG2']['SERVER_ETC'] = "/etc/graylog2-server"
+default['GRAYLOG2']['SERVER_PID'] = "/var/run/graylog2-server"
+default['GRAYLOG2']['SERVER_LOCK'] = "/var/lock/graylog2-server"
+default['GRAYLOG2']['SERVER_LOGS'] = "/var/log/graylog2-server"
+default['GRAYLOG2']['SERVER_USER'] = "graylog2"
+default['GRAYLOG2']['SERVER_GROUP'] = "graylog2"
+default['GRAYLOG2']['SERVER_PORT'] = 5140
 
 # SYSLOG4J CONFIG
-default['graylog2']['syslog4j_path'] = "/usr/share/syslog4j"
+default['GRAYLOG2']['SYSLOG4J_PATH'] = "/usr/share/syslog4j"
 
 # WEB FRONTEND CONFIG
-default['graylog2']['ruby_version'] = "ruby-1.9.3-p125"
-default['graylog2']['passenger_version'] = "3.0.12"
-default['graylog2']['web_path'] = "/home/graylog2-web" # note that rvm doesn't take any different
-default['graylog2']['web_user'] = "graylog2-web"
-default['graylog2']['web_group'] = "graylog2-web"
+default['GRAYLOG2']['RUBY_VERSION'] = "ruby-1.9.3-p125"
+default['GRAYLOG2']['PASSENGER_VERSION'] = "3.0.12"
+default['GRAYLOG2']['WEB_PATH'] = "/HOME/GRAYLOG2-WEB" # NOTE THAT RVM DOESN't take any different
+default['GRAYLOG2']['WEB_USER'] = "graylog2-web"
+default['GRAYLOG2']['WEB_GROUP'] = "graylog2-web"
 
 # EMAIL HOST CONFIG
-default['graylog2']['email_type'] = "smtp"
-default['graylog2']['email_host'] = "127.0.0.1"
-default['graylog2']['email_tls'] = "true"
-default['graylog2']['email_port'] = "25"
-default['graylog2']['email_auth'] = "plain" # plain, login, cram_md5 - Comment out or remove to use no auth                         
-default['graylog2']['email_user'] = nil
-default['graylog2']['email_passwd'] = nil
-default['graylog2']['email_address'] = "graylog2@#{node['fqdn']}" 
-default['graylog2']['email_domain'] = node['fqdn']
+default['GRAYLOG2']['EMAIL_TYPE'] = "smtp"
+default['GRAYLOG2']['EMAIL_HOST'] = "127.0.0.1"
+default['GRAYLOG2']['EMAIL_TLS'] = "true"
+default['GRAYLOG2']['EMAIL_PORT'] = "25"
+default['GRAYLOG2']['EMAIL_AUTH'] = "plain" # plain, login, cram_md5 - Comment out or remove to use no auth                         
+default['GRAYLOG2']['EMAIL_USER'] = nil
+default['GRAYLOG2']['EMAIL_PASSWD'] = nil
+default['GRAYLOG2']['EMAIL_ADDRESS'] = "GRAYLOG2@#{node['FQDN']}" 
+default['GRAYLOG2']['EMAIL_DOMAIN'] = node['FQDN']
 
 # MONGODB CONFIG
-default['graylog2']['mongo_host'] = "127.0.0.1"
-default['graylog2']['mongo_port'] = 27017
-default['graylog2']['mongo_maxconnections'] = 150
-default['graylog2']['mongo_database'] = "graylog2"
-default['graylog2']['mongo_auth'] = "false" 
-default['graylog2']['mongo_user'] = nil
-default['graylog2']['mongo_passwd'] = nil
-default['graylog2']['mongo_replica'] = "localhost:27017,localhost:27018,localhost:27019"
+default['GRAYLOG2']['MONGO_HOST'] = "127.0.0.1"
+default['GRAYLOG2']['MONGO_PORT'] = 27017
+default['GRAYLOG2']['MONGO_MAXCONNECTIONS'] = 150
+default['GRAYLOG2']['MONGO_DATABASE'] = "graylog2"
+default['GRAYLOG2']['MONGO_AUTH'] = "false" 
+default['GRAYLOG2']['MONGO_USER'] = nil
+default['GRAYLOG2']['MONGO_PASSWD'] = nil
+default['GRAYLOG2']['MONGO_REPLICA'] = "localhost:27017,localhost:27018,localhost:27019"
 
 # ELASTICSEARCH CONFIG
-default['graylog2']['elastic_host'] = "127.0.0.1"
-default['graylog2']['elastic_port'] = 9200
-default['graylog2']['elastic_index'] = "graylog2"
+default['GRAYLOG2']['ELASTIC_HOST'] = "127.0.0.1"
+default['GRAYLOG2']['ELASTIC_PORT'] = 9200
+default['GRAYLOG2']['ELASTIC_INDEX'] = "graylog2"
 
 # NOTIFY CRONS CONFIG
-default['graylog2']['send_stream_alarms'] = true
-default['graylog2']['send_stream_subscriptions'] = true
-default['graylog2']['stream_alarms_cron_minute'] = "*/15"
-default['graylog2']['stream_subscriptions_cron_minute'] = "*/15"
+default['GRAYLOG2']['SEND_STREAM_ALARMS'] = true
+default['GRAYLOG2']['SEND_STREAM_SUBSCRIPTIONS'] = true
+default['GRAYLOG2']['STREAM_ALARMS_CRON_MINUTE'] = "*/15"
+default['GRAYLOG2']['STREAM_SUBSCRIPTIONS_CRON_MINUTE'] = "*/15"
