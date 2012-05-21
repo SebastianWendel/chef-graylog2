@@ -24,6 +24,7 @@ mongodb_useauth = <%= node['GRAYLOG2']['MONGO_AUTH'] %>
 mongodb_user = <%= node['GRAYLOG2']['MONGO_USER'] %>
 mongodb_password = <%= node['GRAYLOG2']['MONGO_PASSWD'] %>
 #mongodb_replica_set = <%= node['GRAYLOG2']['MONGO_REPLICA'] %>
+messages_collection_size = <%= node['GRAYLOG2']['MONGO_COLLECTION'] %>
 
 # Graylog2 uses an internal message queue that holds all received messages until they are indexed. The mq_batch_size parameter defines how many messages are sent
 # to ElasticSearch at once (using a _bulk update: http://www.elasticsearch.org/guide/reference/api/bulk.html). The mq_poll_freq parameter controls in which

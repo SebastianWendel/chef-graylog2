@@ -102,8 +102,6 @@ unless FileTest.exists?("#{SERVER_PATH}/lib")
   end
 end
 
-# http://sphughes.com/2012/01/06/a-more-secure-graylog2-server-install/
-
 link "#{SERVER_PATH}/config" do
   to SERVER_ETC
 end
@@ -146,7 +144,7 @@ logrotate_app "graylog2-server" do
   create "644 root adm"
 end
 
-#service "graylog2-server" do
-#  supports :restart => true
-#  action [:enable, :start]
-#end
+service "graylog2-server" do
+  supports :restart => true
+  action [:enable, :start]
+end

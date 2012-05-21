@@ -23,6 +23,7 @@ default['GRAYLOG2']['PROJECT_URL'] = "https://github.com/downloads/Graylog2"
 
 # SERVER BINARY
 default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1-RC2"
+#default['GRAYLOG2']['SERVER_VERSION'] = "0.9.5"
 default['GRAYLOG2']['SERVER_FILE'] = "graylog2-server-#{node['GRAYLOG2']['SERVER_VERSION']}.tar.gz"
 default['GRAYLOG2']['SERVER_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-SERVER/#{node['GRAYLOG2']['SERVER_FILE']}"
 default['GRAYLOG2']['SERVER_CHECKSUM'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
@@ -83,9 +84,10 @@ default['GRAYLOG2']['MONGO_PORT'] = 27017
 default['GRAYLOG2']['MONGO_MAXCONNECTIONS'] = 150
 default['GRAYLOG2']['MONGO_DATABASE'] = "graylog2"
 default['GRAYLOG2']['MONGO_AUTH'] = "false" 
-default['GRAYLOG2']['MONGO_USER'] = nil
-default['GRAYLOG2']['MONGO_PASSWD'] = nil
+default['GRAYLOG2']['MONGO_USER'] = "graylog2"
+default['GRAYLOG2']['MONGO_PASSWD'] = "graylog2"
 default['GRAYLOG2']['MONGO_REPLICA'] = "localhost:27017,localhost:27018,localhost:27019"
+default['GRAYLOG2']['MONGO_COLLECTION'] = "50000000"
 
 # ELASTICSEARCH CONFIG
 default['GRAYLOG2']['ELASTIC_HOST'] = "127.0.0.1"
