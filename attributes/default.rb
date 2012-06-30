@@ -22,7 +22,7 @@
 default['GRAYLOG2']['PROJECT_URL'] = "https://github.com/downloads/Graylog2"
 
 # SERVER BINARY
-#default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1-RC2"
+#default['GRAYLOG2']['SERVER_VERSION'] = "0.9.6p1"
 default['GRAYLOG2']['SERVER_VERSION'] = "0.9.5"
 default['GRAYLOG2']['SERVER_FILE'] = "graylog2-server-#{node['GRAYLOG2']['SERVER_VERSION']}.tar.gz"
 default['GRAYLOG2']['SERVER_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-SERVER/#{node['GRAYLOG2']['SERVER_FILE']}"
@@ -36,7 +36,7 @@ default['GRAYLOG2']['SERVICEWRAPPER_DOWNLOAD'] = "#{node['GRAYLOG2']['SERVICEWRA
 default['GRAYLOG2']['SERVICEWRAPPER_CHECKSUM'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
 
 # WEB BINARY
-default['GRAYLOG2']['WEB_VERSION'] = "0.9.6p1-RC2"
+default['GRAYLOG2']['WEB_VERSION'] = "0.9.6p1"
 default['GRAYLOG2']['WEB_FILE'] = "graylog2-web-interface-#{node['GRAYLOG2']['WEB_VERSION']}.tar.gz"
 default['GRAYLOG2']['WEB_DOWNLOAD'] = "#{node['GRAYLOG2']['PROJECT_URL']}/GRAYLOG2-WEB-INTERFACE/#{node['GRAYLOG2']['WEB_FILE']}"
 default['GRAYLOG2']['WEB_CHECKSUM'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"

@@ -1,41 +1,60 @@
-Description
-===========
+# Description #
 
-Dependencies
-=======
+http://www.graylog2.org
 
-RVM
--------
-[https://github.com/fnichol/chef-rvm]
+# Requirements #
 
-Known Issues:
-[https://github.com/fnichol/chef-rvm/pull/95]
+## Platform ##
+The Cookbooks is build for the following platforms:
+* Debian, Ubuntu
+* CentOS, Red Hat
 
-MongoDB
--------
-[https://github.com/edelight/chef-cookbooks]
+The Cookbooks is tested on the following platforms:
+* Debian 6.05
+* Ubuntu 10.04-4, 12.04
+* CentOS 5.8, 6.2
 
-Recipes
-=======
+## Cookbooks ##
+To install the coockbook use the following commands:
 
-default
--------
+    gem install librarian
+    cd chef-repo
+    librarian-chef init
 
-web-interface
--------------
+    cat >> Cheffile <<END_OF_CHEFFILE
+    cookbook 'graylog2', :git => 'https://github.com/sebwendel/chef-graylog2.git'
+    END_OF_CHEFFILE
 
-apache2
--------
+    librarian-chef install
 
-Usage
-=====
+    knife cookbook upload graylog2
 
-License and Author
-==================
+# Recipes #
+Just include the graylog2 cookbock in your runlist or server role with the following hash table:
 
-Author:: Sebastian Wendel
+    {
+      "run_list": [
+        "recipe[graylog2]"
+      ]
+    }
 
-Copyright 2012, SourceIndex IT-Serives
+This will install the java dependencie, the graylog2 server and the declared plugins.
+
+# Attributes #
+* `node['graylog2']['interface']` - "127.0.0.1" limit to local access, default is "0.0.0.0".
+* `node['graylog2']['port']` - database listener port, default is "27017".
+
+# Limitations #
+At the moment the cookbook just contains a single node procedure.
+
+# ToDos and Issues #
+Have a lock at the github issues section. There's still some work to do, patches are more than welcome.
+
+# License and Author #
+
+Author: Sebastian Wendel, (<packages@sourceindex.de>)
+
+Copyright: 2012, SourceIndex IT-Serives
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -48,4 +67,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
