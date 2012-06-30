@@ -15,13 +15,15 @@ The Cookbooks is tested on the following platforms:
 * CentOS 5.8, 6.2
 
 ## Cookbooks ##
-To install the coockbook use the following commands:
+To install the coockbook use the following commands, depending to your platform:
 
     gem install librarian
     cd chef-repo
     librarian-chef init
 
     cat >> Cheffile <<END_OF_CHEFFILE
+    cookbook 'apt', :git => 'https://github.com/opscode-cookbooks/apt.git'
+    cookbook 'yum', :git => 'https://github.com/opscode-cookbooks/yum.git'
     cookbook 'java', :git => 'https://github.com/opscode-cookbooks/java.git'
     cookbook 'graylog2', :git => 'https://github.com/sebwendel/chef-graylog2.git'
     cookbook 'elasticsearch', :git => 'https://github.com/sebwendel/chef-elasticsearch.git'

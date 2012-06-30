@@ -29,7 +29,13 @@ WEB_FILE          = node['GRAYLOG2']['WEB_FILE']
 WEB_CHECKSUM      = node['GRAYLOG2']['WEB_CHECKSUM']
 
 # COOKBOOK DEPENDENCIES
-execute "apt-get update"
+when "debian", "ubuntu"
+  include_recipe 'apt'
+when "centos","redhat"
+  include_recipe 'yum'
+else
+    Chef::Log.warn("The #{node['platform']} is not yet not supported by this cookbook")
+end
 include_recipe "apache2"
 include_recipe "apache2::mod_ssl"
 include_recipe "apache2::mod_rewrite"
