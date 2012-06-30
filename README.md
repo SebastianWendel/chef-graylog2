@@ -22,12 +22,17 @@ To install the coockbook use the following commands:
     librarian-chef init
 
     cat >> Cheffile <<END_OF_CHEFFILE
+    cookbook 'java', :git => 'https://github.com/opscode-cookbooks/java.git'
     cookbook 'graylog2', :git => 'https://github.com/sebwendel/chef-graylog2.git'
+    cookbook 'elasticsearch', :git => 'https://github.com/sebwendel/chef-elasticsearch.git'
+    cookbook 'mongodb', :git => 'https://github.com/sebwendel/chef-mongodb.git'
+    cookbook 'rvm', :git => 'https://github.com/fnichol/chef-rvm.git'
+    cookbook 'apache2', :git => 'https://github.com/opscode-cookbooks/apache2.git'
     END_OF_CHEFFILE
 
     librarian-chef install
 
-    knife cookbook upload graylog2
+    knife cookbook upload java graylog2 elasticsearch mongodb rvm apache2
 
 # Recipes #
 Just include the graylog2 cookbock in your runlist or server role with the following hash table:
