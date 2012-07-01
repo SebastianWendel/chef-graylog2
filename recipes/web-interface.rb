@@ -185,7 +185,7 @@ cron "Graylog2 send stream alarms" do
   user WEB_USER
   minute node['GRAYLOG2']['STREAM_ALARMS_CRON_MINUTE']
   action node['GRAYLOG2']['SEND_STREAM_ALARMS'] ? :create : :delete
-  command "cd #{WEB_PATH}/current && RAILS_ENV=production bundle exec rake streamalarms:send"
+  command "source ~/.bashrc && cd #{WEB_PATH}/current && RAILS_ENV=production rake streamalarms:send"
 end
 
 # ADD STREAM SUBSCRIPTION CRON FOR THE USER
@@ -193,7 +193,7 @@ cron "Graylog2 send stream subscriptions" do
   user WEB_USER
   minute node['GRAYLOG2']['STREAM_SUBSCRIPTIONS_CRON_MINUTE']
   action node['GRAYLOG2']['SEND_STREAM_SUBSCRIPTIONS'] ? :create : :delete
-  command "cd #{WEB_PATH}/current && RAILS_ENV=production bundle exec rake subscriptions:send"
+  command "source ~/.bashrc && cd #{WEB_PATH}/current && RAILS_ENV=production rake subscriptions:send"
 end
 
 # RELOAD APACHE FOR CONFIG CHANGES
