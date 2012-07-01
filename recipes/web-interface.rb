@@ -29,6 +29,7 @@ WEB_FILE          = node['GRAYLOG2']['WEB_FILE']
 WEB_CHECKSUM      = node['GRAYLOG2']['WEB_CHECKSUM']
 
 # COOKBOOK DEPENDENCIES
+case node['platform']
 when "debian", "ubuntu"
   include_recipe 'apt'
 when "centos","redhat"
@@ -135,8 +136,8 @@ template "Create graylog2-web email config." do
 end
 
 # INSTALL USER ISOLATED RVM
-node['RVM']['USER_INSTALLS'] = [
-  { 'USER' => WEB_USER }
+node['rvm']['user_installs'] = [
+  { 'user' => WEB_USER }
 ]
 
 include_recipe "rvm::user_install"

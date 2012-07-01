@@ -19,6 +19,7 @@
 
 include_recipe "java"
 include_recipe "logrotate"
+include_recipe "elasticsearch"
 include_recipe "mongodb"
 
 SERVER_USER                 = node['GRAYLOG2']['SERVER_USER']
