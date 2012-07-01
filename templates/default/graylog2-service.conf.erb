@@ -63,11 +63,11 @@ wrapper.java.mainclass=org.tanukisoftware.wrapper.WrapperJarApp
 
 # Java Classpath (include wrapper.jar)  Add class path elements as
 #  needed starting from 1
-wrapper.java.classpath.1=<%= node['GRAYLOG2']['SERVER_PATH'] %>/lib/wrapper.jar
-wrapper.java.classpath.2=<%= node['GRAYLOG2']['SERVER_PATH'] %>/graylog2-server.jar
+wrapper.java.classpath.1=<%= node['graylog2']['server_path'] %>/lib/wrapper.jar
+wrapper.java.classpath.2=<%= node['graylog2']['server_path'] %>/graylog2-server.jar
 
 # Java Library Path (location of Wrapper.DLL or libwrapper.so)
-wrapper.java.library.path.1=<%= node['GRAYLOG2']['SERVER_PATH'] %>/lib
+wrapper.java.library.path.1=<%= node['graylog2']['server_path'] %>/lib
 
 # Java Bits.  On applicable platforms, tells the JVM to run in 32 or 64-bit mode.
 wrapper.java.additional.auto_bits=TRUE
@@ -81,11 +81,11 @@ wrapper.java.additional.auto_bits=TRUE
 #wrapper.java.maxmemory=64
 
 # Application parameters.  Add parameters as needed starting from 1
-wrapper.app.parameter.1=<%= node['GRAYLOG2']['SERVER_PATH'] %>/graylog2-server.jar
+wrapper.app.parameter.1=<%= node['graylog2']['server_path'] %>/graylog2-server.jar
 wrapper.app.parameter.2=--configfile
-wrapper.app.parameter.3=<%= node['GRAYLOG2']['SERVER_ETC'] %>/graylog2-server.conf
+wrapper.app.parameter.3=<%= node['graylog2']['server_etc'] %>/graylog2-server.conf
 wrapper.app.parameter.4=--pidfile
-wrapper.app.parameter.5=<%= node['GRAYLOG2']['SERVER_PID'] %>/graylog2.pid
+wrapper.app.parameter.5=<%= node['graylog2']['server_pid'] %>/graylog2.pid
 
 #********************************************************************
 # Wrapper Logging Properties
@@ -100,7 +100,7 @@ wrapper.console.format=PM
 wrapper.console.loglevel=INFO
 
 # Log file to use for wrapper output logging.
-wrapper.logfile=<%= node['GRAYLOG2']['SERVER_LOGS'] %>/gralog2-server-wrapper.log
+wrapper.logfile=<%= node['graylog2']['server_logs'] %>/gralog2-server-wrapper.log
 
 # Format of output for the log file.  (See docs for formats)
 wrapper.logfile.format=LPTM
@@ -131,7 +131,7 @@ wrapper.ignore_sequence_gaps=TRUE
 wrapper.pidfile.strict=TRUE
 
 # Title to use when running as a console
-wrapper.console.title=Test Wrapper Sample Application
+wrapper.console.title=Graylog2
 
 #********************************************************************
 # Wrapper JVM Checks

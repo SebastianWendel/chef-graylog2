@@ -24,15 +24,15 @@ APP_NAME="graylog2-server"
 APP_LONG_NAME="graylog2-server"
 
 # Wrapper
-WRAPPER_CMD="<%= node['GRAYLOG2']['SERVER_PATH'] %>/bin/wrapper"
-WRAPPER_CONF="<%= node['GRAYLOG2']['SERVER_ETC'] %>/graylog2-service.conf"
+WRAPPER_CMD="<%= node['graylog2']['server_path'] %>/bin/wrapper"
+WRAPPER_CONF="<%= node['graylog2']['server_etc'] %>/graylog2-service.conf"
 
 # Priority at which to run the wrapper.  See "man nice" for valid priorities.
 #  nice is only used if a priority is specified.
 PRIORITY=
 
 # Location of the pid file.
-PIDDIR="<%= node['GRAYLOG2']['SERVER_PID'] %>"
+PIDDIR="<%= node['graylog2']['server_pid'] %>"
 
 # FIXED_COMMAND tells the script to use a hard coded action rather than
 # expecting the first parameter of the command line to be the command.
@@ -80,7 +80,7 @@ WAIT_FOR_STARTED_TIMEOUT=120
 # NOTE - This will set the user which is used to run the Wrapper as well as
 #  the JVM and is not useful in situations where a privileged resource or
 #  port needs to be allocated prior to the user being changed.
-RUN_AS_USER=<%= node['GRAYLOG2']['SERVER_USER'] %>
+RUN_AS_USER=<%= node['graylog2']['server_user'] %>
 
 # Specify the number of open files ulimit for the above user
 # recommended value: 32000
@@ -207,7 +207,7 @@ COMMANDFILE="$PIDDIR/$APP_NAME.command"
 STATUSFILE="$PIDDIR/$APP_NAME.status"
 JAVASTATUSFILE="$PIDDIR/$APP_NAME.java.status"
 PIDFILE="$PIDDIR/$APP_NAME.pid"
-LOCKDIR="<%= node['GRAYLOG2']['SERVER_LOCK'] %>"
+LOCKDIR="<%= node['graylog2']['server_lock'] %>"
 LOCKFILE="$LOCKDIR/$APP_NAME"
 pid=""
 

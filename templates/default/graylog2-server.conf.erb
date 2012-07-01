@@ -4,12 +4,12 @@
 #
 
 # On which port (UDP) should we listen for Syslog messages? (Standard: 514)
-syslog_listen_port = <%= node['GRAYLOG2']['SERVER_PORT'] %>
+syslog_listen_port = <%= node['graylog2']['server_port'] %>
 syslog_protocol = udp
 
 # ElasticSearch URL (default: http://localhost:9200/)
-elasticsearch_url = http://<%= node['GRAYLOG2']['ELASTIC_HOST'] %>:<%= node['GRAYLOG2']['ELASTIC_PORT'] %>/
-elasticsearch_index_name = <%= node['GRAYLOG2']['ELASTIC_INDEX'] %>
+elasticsearch_url = http://<%= node['graylog2']['elastic_host'] %>:<%= node['graylog2']['elastic_port'] %>/
+elasticsearch_index_name = <%= node['graylog2']['elastic_index'] %>
 
 # Always try a reverse DNS lookup instead of parsing hostname from syslog message?
 force_syslog_rdns = false
@@ -17,14 +17,14 @@ force_syslog_rdns = false
 allow_override_syslog_date = true
 
 # MongoDB Configuration
-mongodb_host = <%= node['GRAYLOG2']['MONGO_HOST'] %>
-mongodb_port = <%= node['GRAYLOG2']['MONGO_PORT'] %>
-mongodb_database = <%= node['GRAYLOG2']['MONGO_DATABASE'] %>
-mongodb_useauth = <%= node['GRAYLOG2']['MONGO_AUTH'] %>
-mongodb_user = <%= node['GRAYLOG2']['MONGO_USER'] %>
-mongodb_password = <%= node['GRAYLOG2']['MONGO_PASSWD'] %>
-#mongodb_replica_set = <%= node['GRAYLOG2']['MONGO_REPLICA'] %>
-messages_collection_size = <%= node['GRAYLOG2']['MONGO_COLLECTION'] %>
+mongodb_host = <%= node['graylog2']['mongo_host'] %>
+mongodb_port = <%= node['graylog2']['mongo_port'] %>
+mongodb_database = <%= node['graylog2']['mongo_database'] %>
+mongodb_useauth = <%= node['graylog2']['mongo_auth'] %>
+mongodb_user = <%= node['graylog2']['mongo_user'] %>
+mongodb_password = <%= node['graylog2']['mongo_passwd'] %>
+#mongodb_replica_set = <%= node['graylog2']['mongo_replica'] %>
+messages_collection_size = <%= node['graylog2']['mongo_collection'] %>
 
 # Graylog2 uses an internal message queue that holds all received messages until they are indexed. The mq_batch_size parameter defines how many messages are sent
 # to ElasticSearch at once (using a _bulk update: http://www.elasticsearch.org/guide/reference/api/bulk.html). The mq_poll_freq parameter controls in which

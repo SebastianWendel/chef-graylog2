@@ -10,11 +10,11 @@ general:
   allow_version_check: true 
   
 subscriptions:
-  from:  <%= node['GRAYLOG2']['EMAIL_ADDRESS'] %>
+  from:  <%= node['graylog2']['email_address'] %>
   subject: "[graylog2] Subscription"
 
 streamalarms:
-  from: <%= node['GRAYLOG2']['EMAIL_ADDRESS'] %>
+  from: <%= node['graylog2']['email_address'] %>
   subject: "[graylog2] Stream alarm!"
 
 hoptoad:
