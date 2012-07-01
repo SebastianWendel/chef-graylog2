@@ -6,6 +6,11 @@
 production:
   host: <%= node['GRAYLOG2']['MONGO_HOST'] %>
   port: <%= node['GRAYLOG2']['MONGO_PORT'] %>
+<% if node['GRAYLOG2']['MONGO_AUTH'] == true %>                                                                           
   username: <%= node['GRAYLOG2']['MONGO_USER'] %>
   password: <%= node['GRAYLOG2']['MONGO_PASSWD'] %>
+<% else %>
+  username:
+  password:
   database: <%= node['GRAYLOG2']['MONGO_DATABASE'] %>
+<% end %>
