@@ -18,9 +18,9 @@
 #
 
 include_recipe "java"
-#include_recipe "logrotate"
-#include_recipe "mongodb"
-#include_recipe "elasticsearch"
+include_recipe "logrotate"
+include_recipe "mongodb"
+include_recipe "elasticsearch"
 
 group node['graylog2']['server_group'] do
     system true
