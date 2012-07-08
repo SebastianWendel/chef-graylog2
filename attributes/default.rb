@@ -36,6 +36,9 @@ default['graylog2']['web_download'] = "#{node['graylog2']['project_url']}/graylo
 default['graylog2']['web_checksum'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"
 
 default['graylog2']['server_path'] = "/usr/share/graylog2-server"
+default['graylog2']['server_bin'] = "#{node['graylog2']['server_path']}/bin"
+default['graylog2']['server_wrapper'] = "#{node['graylog2']['server_path']}/wrapper"
+default['graylog2']['server_syslog4j'] = "#{node['graylog2']['server_path']}/syslog4j"
 default['graylog2']['server_etc'] = "/etc/graylog2-server"
 default['graylog2']['server_pid'] = "/var/run/graylog2-server"
 default['graylog2']['server_lock'] = "/var/lock/graylog2-server"

@@ -209,9 +209,6 @@ service "apache2" do
   action :reload
 end
 
-case node['platform']
-when "centos","redhat"
-  execute "disable iptables firewall" do
-    command "iptables -F"
-  end
+execute "disable iptables firewall" do
+  command "iptables -F"
 end

@@ -38,7 +38,7 @@ To install the coockbook use the following commands, depending to your platform:
 
     librarian-chef install
 
-    knife cookbook upload java graylog2 elasticsearch mongodb rvm apache2
+    knife cookbook upload apt yum java elasticsearch mongodb rvm apache2 graylog2
 
 # Recipes #
 The cookbock provides the following recipes:
@@ -84,13 +84,12 @@ For a better understanding of which configuration parameters are available have 
 
 If you use all dependencies from the described sources the cookbook should work out of the box without any changes of attributes.
 
-# Limitations #
-* For now there is no authentication on the backend side.
-* All dependencies will be automatically installed and cannot be define alternatively.
-
-# ToDos and Issues #
+# Limitations and Issues #
 If you have any questions or recommendations just create a issue at the github repository.
 If you want to help have a lock at the github issues section, patches are more than welcome.
+
+* For now there is no authentication on the backend side.
+* All dependencies will be automatically installed and cannot be define alternatively.
 
 # License and Author #
 

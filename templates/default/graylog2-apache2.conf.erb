@@ -26,14 +26,8 @@
   CustomLog   <%= node['apache']['log_dir'] %>/graylog2-web-access.log combined
 
   SSLEngine on
-  <% case node['platform'] -%>
-  <% when "debian", "ubuntu" -%>
-  SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
-  SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
-  <% when "centos", "redhat" -%>
   SSLCertificateFile    <%= node['apache']['dir'] %>/ssl/graylog2.pem
   SSLCertificateKeyFile <%= node['apache']['dir'] %>/ssl/graylog2.key
-  <% end -%>
 
   LoadModule passenger_module <%= node['graylog2']['web_path'] %>/.rvm/gems/<%= node['graylog2']['ruby_version'] %>/gems/passenger-<%= node['graylog2']['passenger_version'] %>/ext/apache2/mod_passenger.so
   PassengerRoot <%= node['graylog2']['web_path'] %>/.rvm/gems/<%= node['graylog2']['ruby_version'] %>/gems/passenger-<%= node['graylog2']['passenger_version'] %>

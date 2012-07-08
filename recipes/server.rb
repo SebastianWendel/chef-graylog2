@@ -18,9 +18,9 @@
 #
 
 include_recipe "java"
-include_recipe "logrotate"
-include_recipe "elasticsearch"
-include_recipe "mongodb"
+#include_recipe "logrotate"
+#include_recipe "mongodb"
+#include_recipe "elasticsearch"
 
 group node['graylog2']['server_group'] do
     system true
@@ -34,6 +34,9 @@ user node['graylog2']['server_user'] do
 end
 
 root_dirs = [
+  node['graylog2']['server_path'],
+  node['graylog2']['server_bin'],
+  node['graylog2']['server_wrapper'],
   node['graylog2']['server_path'],
   node['graylog2']['server_etc']
 ]
@@ -60,7 +63,7 @@ user_dirs.each do |dir|
   end
 end
 
-unless FileTest.exists?(node['graylog2']['server_path'])
+unless FileTest.exists?("#{node['graylog2']['server_bin']}/graylog2-server.jar")
   remote_FILE "#{Chef::Config[:file_cache_path]}/#{node['graylog2']['server_file']}" do
     source node['graylog2']['server_download']
     checksum node['graylog2']['server_checksum']
@@ -71,27 +74,25 @@ unless FileTest.exists?(node['graylog2']['server_path'])
     cwd Chef::Config[:file_cache_path]
     code <<-EOH
       tar -zxf #{node['graylog2']['server_file']}
-      rm -rf graylog2-server-#{node['graylog2']['server_version']}/build_date graylog2-server-#{node['graylog2']['server_version']}/bin graylog2-server-#{node['graylog2']['server_version']}/COPYING graylog2-server-#{node['graylog2']['server_version']}/graylog2.conf.example graylog2-server-#{node['graylog2']['server_version']}/README graylog2-server-#{node['graylog2']['server_version']}/doc
-      mv -f graylog2-server-#{node['graylog2']['server_version']}/* #{node['graylog2']['server_path']}
-      chown -Rf root:root #{node['graylog2']['server_path']}
+      rm -rf graylog2-server-#{node['graylog2']['server_version']}/build_date graylog2-server-#{node['graylog2']['server_version']}/bin graylog2-server-#{node['graylog2']['server_version']}/graylog2.conf.example
+      mv -f graylog2-server-#{node['graylog2']['server_version']}/* #{node['graylog2']['server_bin']}
     EOH
   end
 end
 
-unless FileTest.exists?("#{node['graylog2']['server_path']}/lib")
-  remote_FILE "#{Chef::Config[:file_cache_PATH]}/#{node['graylog2']['servicewrapper_file']}" do
+unless FileTest.exists?("#{node['graylog2']['server_wrapper']}/lib/wrapper.jar")
+  remote_FILE "#{Chef::Config[:file_cache_path]}/#{node['graylog2']['servicewrapper_file']}" do
     source node['graylog2']['servicewrapper_download']
     checksum node['graylog2']['servicewrapper_checksum']
     action :create_if_missing
   end
 
   bash "extract java service wrapper" do
-    cwd Chef::Config[:file_cache_PATH]
+    cwd Chef::Config[:file_cache_path]
     code <<-EOH
       tar -zxf #{node['graylog2']['servicewrapper_file']} 
-      rm -rf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/conf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/src wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/doc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/logs wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc.tar.gz wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/README*.*
-      mv wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/* #{node['graylog2']['server_path']}
-      chown -Rf root:root #{node['graylog2']['server_path']}
+      rm -rf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/conf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/src wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/doc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/logs wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc.tar.gz wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*.exe wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*.bat wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/lib/*.dll wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/lib/*demo*.* wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*test*.*
+      mv wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/* #{node['graylog2']['server_wrapper']}
     EOH
   end
 end
@@ -111,8 +112,8 @@ template "/etc/init.d/graylog2-server" do
   mode 0755
 end
 
-template "#{node['graylog2']['server_etc']}/graylog2-service.conf" do
-  source "graylog2-service.conf.erb"
+template "#{node['graylog2']['server_etc']}/graylog2-wrapper.conf" do
+  source "graylog2-server-wrapper.conf.erb"
   owner "root"
   group "root"
   mode 0644
