@@ -20,31 +20,69 @@
 case node['platform']
 when "debian", "ubuntu"
   include_recipe 'apt'
+  packages = %w{apache2-dev libcurl4-openssl-dev}
+    packages.each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
 when "centos","redhat"
   include_recipe 'yum'
-else
-    Chef::Log.warn("The #{node['platform']} is not yet not supported by this cookbook")
+  include_recipe "yum::epel"
+  packages = %w{httpd httpd-devel curl-devel crontabs}
+    packages.each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
+end
+package "postfix"
+
+case node['platform']
+when "centos","redhat"
+  bash "Workaround for http://tickets.opscode.com/browse/COOK-1210" do 
+    code <<-EOH
+      echo 0 > /selinux/enforce
+    EOH
+  end
 end
 
 include_recipe "apache2"
 include_recipe "apache2::mod_ssl"
 include_recipe "apache2::mod_rewrite"
 
-package "postfix"
-package "apache2-dev"
-package "libcurl4-openssl-dev"
+execute "create graylog2 ssl request" do
+  command "openssl genrsa > #{node['apache']['dir']}/ssl/graylog2.key"
+  not_if { ::File.exists?("#{node['apache']['dir']}/ssl/graylog2.key") }
+end
 
-template "Added Graylog2 Web-Interface Apache config." do
-  path "/etc/apache2/sites-available/graylog2"
-  source "apache2.erb"
+execute "create graylog2 ssl certficate" do
+  command %Q{openssl req -new -x509 -key #{node['apache']['dir']}/ssl/graylog2.key -out #{node['apache']['dir']}/ssl/graylog2.pem -days 3650 <<EOF
+US
+Washington
+Seattle
+Opscode, Inc
+
+example.com
+webmaster@example.com
+EOF}
+  not_if { ::File.exists?("#{node['apache']['dir']}/ssl/graylog2.pem") }
+end
+
+template "#{node[:apache][:dir]}/sites-available/graylog2.conf" do
+  source "graylog2-apache2.conf.erb"
   mode 0644
+  owner "root"
+  group "root"
+end
+
+apache_site "graylog2.conf" do
+    enable true
 end
 
 apache_site "000-default" do
   enable false
 end
-
-apache_site "graylog2"
 
 group node['graylog2']['web_group'] do
   system true
@@ -76,8 +114,10 @@ unless FileTest.exists?("#{node['graylog2']['web_path']}/graylog2-web-interface-
     to "#{node['graylog2']['web_path']}/graylog2-web-interface-#{node['graylog2']['web_version']}"
   end
 
-  log "Downloaded, installed and configured the Graylog2 Web binary files in #{node['graylog2']['web_path']}/#{node['graylog2']['web_version']}." do
-    action :nothing
+  bash "setting gaylog2 rights to #{node['graylog2']['web_file']}" do
+    code <<-EOH
+      chmod -R 777 #{node['graylog2']['web_path']}
+    EOH
   end
 end
 
@@ -167,4 +207,11 @@ end
 
 service "apache2" do 
   action :reload
+end
+
+case node['platform']
+when "centos","redhat"
+  execute "disable iptables firewall" do
+    command "iptables -F"
+  end
 end
