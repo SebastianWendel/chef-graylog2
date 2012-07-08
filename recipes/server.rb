@@ -19,96 +19,90 @@
 
 include_recipe "java"
 include_recipe "logrotate"
-include_recipe "elasticsearch"
 include_recipe "mongodb"
+include_recipe "elasticsearch"
 
-SERVER_USER                 = node['GRAYLOG2']['SERVER_USER']
-SERVER_GROUP                = node['GRAYLOG2']['SERVER_GROUP']
-SERVER_PATH                 = node['GRAYLOG2']['SERVER_PATH']
-SERVER_ETC                  = node['GRAYLOG2']['SERVER_ETC']
-SERVER_LOGS                 = node['GRAYLOG2']['SERVER_LOGS']
-SERVER_PID                  = node['GRAYLOG2']['SERVER_PID']
-SERVER_LOCK                 = node['GRAYLOG2']['SERVER_LOCK']
-SERVER_DOWNLOAD             = node['GRAYLOG2']['SERVER_DOWNLOAD']
-SERVER_VERSION              = node['GRAYLOG2']['SERVER_VERSION']
-SERVER_FILE                 = node['GRAYLOG2']['SERVER_FILE']
-SERVER_CHECKSUM             = node['GRAYLOG2']['SERVER_CHECKSUM']
-
-SERVICEWRAPPER_PATH         = node['GRAYLOG2']['SERVICEWRAPPER_PATH'] 
-SERVICEWRAPPER_DOWNLOAD     = node['GRAYLOG2']['SERVICEWRAPPER_DOWNLOAD']
-SERVICEWRAPPER_VERSION      = node['GRAYLOG2']['SERVICEWRAPPER_VERSION']
-SERVICEWRAPPER_FILE         = node['GRAYLOG2']['SERVICEWRAPPER_FILE']
-SERVICEWRAPPER_CHECKSUM     = node['GRAYLOG2']['SERVICEWRAPPER_CHECKSUM']
-
-group SERVER_GROUP do
+group node['graylog2']['server_group'] do
     system true
 end
 
-user SERVER_USER do
-    home SERVER_PATH
+user node['graylog2']['server_user'] do
+    home node['graylog2']['server_path']
     comment "services user for graylog2-server"
-    gid SERVER_GROUP
+    gid node['graylog2']['server_group']
     system true
 end
 
-[SERVER_PATH, SERVER_ETC].each do |folder|
-  directory folder do
+root_dirs = [
+  node['graylog2']['server_path'],
+  node['graylog2']['server_bin'],
+  node['graylog2']['server_wrapper'],
+  node['graylog2']['server_path'],
+  node['graylog2']['server_etc']
+]
+
+root_dirs.each do |dir|
+  directory dir do
     owner "root"
     group "root"
     mode "0755"
   end
 end
 
-[SERVER_PID, SERVER_LOCK, SERVER_LOGS].each do |folder|
-  directory folder do
-    owner SERVER_USER
-    group SERVER_GROUP
+user_dirs = [
+  node['graylog2']['server_pid'],
+  node['graylog2']['server_lock'],
+  node['graylog2']['server_logs']
+]
+
+user_dirs.each do |dir|
+  directory dir do
+    owner node['graylog2']['server_user']
+    group node['graylog2']['server_group']
     mode "0755"
   end
 end
 
-unless FileTest.exists?(SERVER_PATH)
-  remote_FILE "#{Chef::Config[:file_cache_PATH]}/#{SERVER_FILE}" do
-    source SERVER_DOWNLOAD
-    checksum SERVER_CHECKSUM
+unless FileTest.exists?("#{node['graylog2']['server_bin']}/graylog2-server.jar")
+  remote_FILE "#{Chef::Config[:file_cache_path]}/#{node['graylog2']['server_file']}" do
+    source node['graylog2']['server_download']
+    checksum node['graylog2']['server_checksum']
     action :create_if_missing
   end
 
-  bash "install graylog2 sources #{SERVER_FILE}" do
-    cwd Chef::Config[:file_cache_PATH]
+  bash "install graylog2 sources #{node['graylog2']['server_file']}" do
+    cwd Chef::Config[:file_cache_path]
     code <<-EOH
-      tar -zxf #{SERVER_FILE}
-      rm -rf graylog2-server-#{SERVER_VERSION}/build_date graylog2-server-#{SERVER_VERSION}/bin graylog2-server-#{SERVER_VERSION}/COPYING graylog2-server-#{SERVER_VERSION}/graylog2.conf.example graylog2-server-#{SERVER_VERSION}/README graylog2-server-#{SERVER_VERSION}/doc
-      mv -f graylog2-server-#{SERVER_VERSION}/* #{SERVER_PATH}
-      chown -Rf root:root #{SERVER_PATH}
+      tar -zxf #{node['graylog2']['server_file']}
+      rm -rf graylog2-server-#{node['graylog2']['server_version']}/build_date graylog2-server-#{node['graylog2']['server_version']}/bin graylog2-server-#{node['graylog2']['server_version']}/graylog2.conf.example
+      mv -f graylog2-server-#{node['graylog2']['server_version']}/* #{node['graylog2']['server_bin']}
     EOH
   end
 end
 
-unless FileTest.exists?("#{SERVER_PATH}/lib")
-  remote_FILE "#{Chef::Config[:file_cache_PATH]}/#{SERVICEWRAPPER_FILE}" do
-    source SERVICEWRAPPER_DOWNLOAD
-    checksum SERVICEWRAPPER_CHECKSUM
+unless FileTest.exists?("#{node['graylog2']['server_wrapper']}/lib/wrapper.jar")
+  remote_FILE "#{Chef::Config[:file_cache_path]}/#{node['graylog2']['servicewrapper_file']}" do
+    source node['graylog2']['servicewrapper_download']
+    checksum node['graylog2']['servicewrapper_checksum']
     action :create_if_missing
   end
 
   bash "extract java service wrapper" do
-    cwd Chef::Config[:file_cache_PATH]
+    cwd Chef::Config[:file_cache_path]
     code <<-EOH
-      tar -zxf #{SERVICEWRAPPER_FILE} 
-      rm -rf wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/conf wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/src wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/jdoc wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/doc wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/logs wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/jdoc.tar.gz wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/README*.*
-      mv wrapper-delta-pack-#{SERVICEWRAPPER_VERSION}/* #{SERVER_PATH}
-      chown -Rf root:root #{SERVER_PATH}
+      tar -zxf #{node['graylog2']['servicewrapper_file']} 
+      rm -rf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/conf wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/src wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/doc wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/logs wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/jdoc.tar.gz wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*.exe wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*.bat wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/lib/*.dll wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/lib/*demo*.* wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/bin/*test*.*
+      mv wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}/* #{node['graylog2']['server_wrapper']}
     EOH
   end
 end
 
-link "#{SERVER_PATH}/config" do
-  to SERVER_ETC
+link "#{node['graylog2']['server_path']}/config" do
+  to node['graylog2']['server_etc']
 end
 
-link "#{SERVER_PATH}/logs" do
-  to SERVER_LOGS
+link "#{node['graylog2']['server_path']}/logs" do
+  to node['graylog2']['server_logs']
 end
 
 template "/etc/init.d/graylog2-server" do
@@ -118,14 +112,14 @@ template "/etc/init.d/graylog2-server" do
   mode 0755
 end
 
-template "#{SERVER_ETC}/graylog2-service.conf" do
-  source "graylog2-service.conf.erb"
+template "#{node['graylog2']['server_etc']}/graylog2-wrapper.conf" do
+  source "graylog2-server-wrapper.conf.erb"
   owner "root"
   group "root"
   mode 0644
 end
 
-template "#{SERVER_ETC}/graylog2-server.conf" do
+template "#{node['graylog2']['server_etc']}/graylog2-server.conf" do
     source "graylog2-server.conf.erb"
     mode 0644
 end
@@ -139,7 +133,7 @@ end
 
 logrotate_app "graylog2-server" do
   cookbook "logrotate"
-  path "/var/log/graylog2-server/graylog2.log"
+  path "#{node['graylog2']['server_logs']}/graylog2.log"
   frequency "daily"
   rotate 30
   create "644 root adm"

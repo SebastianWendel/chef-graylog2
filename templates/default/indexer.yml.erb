@@ -4,5 +4,5 @@
 #
 
 production:
-  url: http://<%= node['GRAYLOG2']['ELASTIC_HOST'] %>:<%= node['GRAYLOG2']['ELASTIC_PORT'] %>/
-  index_name: <%= node['GRAYLOG2']['ELASTIC_INDEX'] %>
+  url: http://<%= node['graylog2']['elastic_host'] %>:<%= node['graylog2']['elastic_port'] %>/
+  index_name: <%= node['graylog2']['elastic_index'] %>

@@ -4,13 +4,13 @@
 #
 
 production:
-  host: <%= node['GRAYLOG2']['MONGO_HOST'] %>
-  port: <%= node['GRAYLOG2']['MONGO_PORT'] %>
-<% if node['GRAYLOG2']['MONGO_AUTH'] == true %>                                                                           
-  username: <%= node['GRAYLOG2']['MONGO_USER'] %>
-  password: <%= node['GRAYLOG2']['MONGO_PASSWD'] %>
+  host: <%= node['graylog2']['mongo_host'] %>
+  port: <%= node['graylog2']['mongo_port'] %>
+<% if node['graylog2']['MONGO_AUTH'] == true %>                                                                           
+  username: <%= node['graylog2']['mongo_user'] %>
+  password: <%= node['graylog2']['mongo_passwd'] %>
 <% else %>
   username:
   password:
-  database: <%= node['GRAYLOG2']['MONGO_DATABASE'] %>
+  database: <%= node['graylog2']['mongo_database'] %>
 <% end %>

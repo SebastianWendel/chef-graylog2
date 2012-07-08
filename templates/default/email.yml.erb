@@ -4,11 +4,11 @@
 #
 
 production:
-  via: <%= node['GRAYLOG2']['EMAIL_TYPE'] %>
-  host: <%= node['GRAYLOG2']['EMAIL_HOST'] %>
-  enable_starttls_auto: <%= node['GRAYLOG2']['EMAIL_TLS'] %>
-  port: <%= node['GRAYLOG2']['EMAIL_PORT'] %>
-  auth: <%= node['GRAYLOG2']['EMAIL_AUTH'] %>
-  user: <%= node['GRAYLOG2']['EMAIL_USER'] %>
-  password: <%= node['GRAYLOG2']['EMAIL_PASSWD'] %>
-  domain: <%= node['GRAYLOG2']['EMAIL_DOMAIN'] %>
+  via: <%= node['graylog2']['email_type'] %>
+  host: <%= node['graylog2']['email_host'] %>
+  enable_starttls_auto: <%= node['graylog2']['email_tls'] %>
+  port: <%= node['graylog2']['email_port'] %>
+  auth: <%= node['graylog2']['email_auth'] %>
+  user: <%= node['graylog2']['email_user'] %>
+  password: <%= node['graylog2']['email_passwd'] %>
+  domain: <%= node['graylog2']['email_domain'] %>
