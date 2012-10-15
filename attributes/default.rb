@@ -47,8 +47,8 @@ default['graylog2']['server_user'] = "graylog2"
 default['graylog2']['server_group'] = "graylog2"
 default['graylog2']['server_port'] = 5140
 
-default['graylog2']['ruby_version'] = "ruby-1.9.3-p125"
-default['graylog2']['passenger_version'] = "3.0.12"
+default['graylog2']['ruby_version'] = "ruby-1.9.3-p194"
+default['graylog2']['passenger_version'] = "3.0.17"
 default['graylog2']['web_path'] = "/home/graylog2-web"
 default['graylog2']['web_user'] = "graylog2-web"
 default['graylog2']['web_group'] = "graylog2-web"
