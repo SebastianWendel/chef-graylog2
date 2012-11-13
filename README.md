@@ -21,24 +21,15 @@ The Cookbooks is tested on the following platforms:
 ## Cookbooks ##
 To install the coockbook use the following commands, depending to your platform:
 
-    gem install librarian
     cd chef-repo
-    librarian-chef init
 
-    cat >> Cheffile <<END_OF_CHEFFILE
-    cookbook 'apt', :git => 'https://github.com/opscode-cookbooks/apt.git'
-    cookbook 'yum', :git => 'https://github.com/opscode-cookbooks/yum.git'
-    cookbook 'java', :git => 'https://github.com/opscode-cookbooks/java.git'
-    cookbook 'elasticsearch', :git => 'https://github.com/sebwendel/chef-elasticsearch.git'
-    cookbook 'mongodb', :git => 'https://github.com/sebwendel/chef-mongodb.git'
-    cookbook 'rvm', :git => 'https://github.com/fnichol/chef-rvm.git'
-    cookbook 'apache2', :git => 'https://github.com/opscode-cookbooks/apache2.git'
-    cookbook 'graylog2', :git => 'https://github.com/sebwendel/chef-graylog2.git'
-    END_OF_CHEFFILE
-
-    librarian-chef install
-
-    knife cookbook upload apt yum java elasticsearch mongodb rvm apache2 graylog2
+    bundle install
+    
+    rbenv rehash (if you use rbenv)
+    
+    berks install
+    
+    berks upload
 
 # Recipes #
 The cookbock provides the following recipes:
