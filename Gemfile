@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-gem 'berkshelf','>= 0.6.0.beta2'
+gem 'berkshelf','>= 1.0.0'
 gem 'vagrant'
