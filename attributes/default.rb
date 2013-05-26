@@ -18,17 +18,8 @@
 # limitations under the License.
 #
 
-default['graylog2']['project_url'] = "https://github.com/downloads/Graylog2"
-default['graylog2']['server_version'] = "0.9.6p1"
-default['graylog2']['server_file'] = "graylog2-server-#{node['graylog2']['server_version']}.tar.gz"
-default['graylog2']['server_download'] = "#{node['graylog2']['project_url']}/graylog2-server/#{node['graylog2']['server_file']}"
-default['graylog2']['server_checksum'] = "8bdddfc2ba9b8537f705f997461bd40d3a4091cd3f2b824622704a62ef1c0b96"
-
-default['graylog2']['servicewrapper_version'] = "3.5.14"
-default['graylog2']['servicewrapper_url'] = "http://wrapper.tanukisoftware.com/download/#{node['graylog2']['servicewrapper_version']}/"
-default['graylog2']['servicewrapper_file'] = "wrapper-delta-pack-#{node['graylog2']['servicewrapper_version']}.tar.gz"
-default['graylog2']['servicewrapper_download'] = "#{node['graylog2']['servicewrapper_url']}/#{node['graylog2']['servicewrapper_file']}/"
-default['graylog2']['servicewrapper_checksum'] = "8098efc957bd94b07f7da977d946c94a167a1977b4e32aac5ca552c99fe0c173"
+default['graylog2']['project_url'] = "http://graylog2.org/download"
+default['graylog2']['servicewrapper_url'] = "http://wrapper.tanukisoftware.com/download"
 
 default['graylog2']['web_version'] = "0.9.6p1"
 default['graylog2']['web_file'] = "graylog2-web-interface-#{node['graylog2']['web_version']}.tar.gz"
