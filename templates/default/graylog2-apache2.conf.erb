@@ -5,7 +5,7 @@
 
 <VirtualHost *:80>
   ServerSignature Off
-  DocumentRoot <%= node['graylog2']['web_path'] %>/current/public
+  DocumentRoot <%= node['graylog2']['web_path'] %>/graylog2-web-interface/public
 
   LogLevel warn
   ErrorLog    <%= node['apache']['log_dir'] %>/graylog2-web-error.log
@@ -19,7 +19,7 @@
 
 <VirtualHost *:443>
   ServerSignature Off
-  DocumentRoot <%= node['graylog2']['web_path'] %>/current/public
+  DocumentRoot <%= node['graylog2']['web_path'] %>/graylog2-web-interface/public
 
   LogLevel warn
   ErrorLog    <%= node['apache']['log_dir'] %>/graylog2-web-error.log
@@ -36,7 +36,7 @@
   PassengerLogLevel 0
   PassengerDebugLogFile <%= node['apache']['log_dir'] %>/graylog2-web-pessenger-error.log
 
-  <Directory <%= node['graylog2']['web_path'] %>/current/public>
+  <Directory <%= node['graylog2']['web_path'] %>/graylog2-web-interface/public>
     Allow from all
     Options -MultiViews
   </Directory>

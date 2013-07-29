@@ -21,7 +21,7 @@
 default['graylog2']['project_url'] = "http://graylog2.org/download"
 default['graylog2']['servicewrapper_url'] = "http://wrapper.tanukisoftware.com/download"
 
-default['graylog2']['web_version'] = "0.9.6p1"
+default['graylog2']['web_version'] = "0.11.0"
 default['graylog2']['web_file'] = "graylog2-web-interface-#{node['graylog2']['web_version']}.tar.gz"
 default['graylog2']['web_download'] = "#{node['graylog2']['project_url']}/graylog2-web-interface/#{node['graylog2']['web_file']}"
 default['graylog2']['web_checksum'] = "b2f8951a7effc1c3b617482bea0c79427f801f4034525adb163d041c34707fc1"
@@ -38,7 +38,7 @@ default['graylog2']['server_user'] = "graylog2"
 default['graylog2']['server_group'] = "graylog2"
 default['graylog2']['server_port'] = 5140
 
-default['graylog2']['ruby_version'] = "ruby-1.9.3-p125"
+default['graylog2']['ruby_version'] = "ruby-1.9.3-head"
 default['graylog2']['passenger_version'] = "3.0.12"
 default['graylog2']['web_path'] = "/home/graylog2-web"
 default['graylog2']['web_user'] = "graylog2-web"

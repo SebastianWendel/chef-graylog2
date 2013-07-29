@@ -137,6 +137,6 @@ template "/etc/init.d/graylog2-server" do
 end
 
 service "graylog2-server" do
-  supports :restart => true
+  supports :start => true
   action [:enable, :start]
 end

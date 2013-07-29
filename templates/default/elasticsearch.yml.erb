@@ -1,8 +1,11 @@
 # this must be the same as for your elasticsearch cluster
-cluster.name: elasticsearch
+cluster.name: <%= node['elasticsearch']['clustername'] %>
 
 # you could also leave this out, but makes it easier to identify the graylog2 client instance
 node.name: "graylog2-server"
+
+
+#org.elasticsearch.transport.netty - [graylog2-server] Message not fully read (request) for [5] and action [cluster/nodes/stats/n], resetting
 
 # we don't want the graylog2 client to store any data, or be master node
 node.master: false
@@ -63,4 +66,3 @@ http.enabled: false
 #
 # See <http://elasticsearch.org/tutorials/2011/08/22/elasticsearch-on-ec2.html>
 # for a step-by-step tutorial.
-
